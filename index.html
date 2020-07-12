@@ -437,7 +437,7 @@ term.
 <p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.</p>
 
 <ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
-<li>Set the first two bytes (CBOR Tag) to 0x3200 (CBOR-LD - 0x32, Uncompressed - 0x00))</li>
+<li>Set the first two bytes (CBOR Tag) to 0x5000 (CBOR-LD - 0x50, Uncompressed - 0x00))</li>
 <li>For every key-value in the map, generate the Uncompressed CBOR-LD Buffer by converting it to the associated CBOR-LD tag and value. For complex values (maps, arrays), recursively convert the value to something that will naturally map back to JSON-LD.</li>
 <li>Return the Uncompressed CBOR-LD Buffer.</li></ol>
 </section>
@@ -447,7 +447,7 @@ term.
 <p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input. The `options` MUST contain a `contextUrls` entry, which is a list of URL strings.</p>
 
 <ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
-<li>Set the first two bytes (CBOR Tag) to 0x3200 (CBOR-LD - 0x32, Compressed - Algorithm Version 1 - 0x01))</li>
+<li>Set the first two bytes (CBOR Tag) to 0x5001 (CBOR-LD - 0x50, Compressed - Algorithm Version 1 - 0x01))</li>
 <li>Initialize `compressionDictionary` to the result of the "Get Compression Dictionary" algorithm passing identifiedContexts as input.</li>
 <li>Add to `result` by recursively processing every name-value pair in `jsonldDocument`</li>
 <ol><li>Let `compressionHint` be the value associated with the JSON name in the `compressionDictionary`.</li>
