@@ -222,7 +222,18 @@
 
 <body>
 <section id="abstract">
-
+  <p>
+CBOR is a compact binary data serialization and messaging format.  This
+specification defines CBOR-LD 1.0, a CBOR-based format to serialize Linked Data.
+The encoding is designed to leverage the existing JSON-LD ecosystem, which is
+deployed on hundreds of millions of systems today, to provide a compact
+serialization format for those seeking efficient encoding schemes for Linked
+Data. By utilizing semantic compression schemes, compression ratios in excess of
+60% better than generalized compression schemes are possible. This format is
+primarily intended to be a way to use Linked Data in storage and bandwidth
+constrained programming environments, to build interoperable semantic wire-level
+protocols, and to efficiently store Linked Data in CBOR-based storage engines.
+  </p>
 </section>
 
 <section id="sotd">
@@ -236,8 +247,18 @@ capable of demonstrating the features described in this document.
 
 <section class="informative">
   <h1>Introduction</h1>
-
-  <p></p>
+  <p>
+CBOR is a compact binary data serialization and messaging format.  This
+specification defines CBOR-LD 1.0, a CBOR-based format to serialize Linked Data.
+The encoding is designed to leverage the existing JSON-LD ecosystem, which is
+deployed on hundreds of millions of systems today, to provide a compact
+serialization format for those seeking efficient encoding schemes for Linked
+Data. By utilizing semantic compression schemes, compression ratios in excess of
+60% better than generalized compression schemes are possible. This format is
+primarily intended to be a way to use Linked Data in storage and bandwidth
+constrained programming environments, to build interoperable semantic wire-level
+protocols, and to efficiently store Linked Data in CBOR-based storage engines.
+  </p>
 
   <section class="informative">
     <h2>How to Read this Document</h2>
@@ -254,8 +275,10 @@ capable of demonstrating the features described in this document.
       <li>Software developers who want to implement processors and APIs for
         CBOR-LD</li>
       <li>Software developers who want to generate or consume Linked Data,
-        an <a>RDF graph</a>, or an <a>RDF Dataset</a> in a CBOR syntax</li>
+        an RDF graph, or an RDF Dataset in a CBOR syntax</li>
     </ul>
+
+    <section id="conformance"></section>
 
   </section>
 
@@ -275,7 +298,6 @@ capable of demonstrating the features described in this document.
       <li>The <a href="https://webchat.freenode.net/?channels=json-ld">#json-ld</a>
         IRC channel is also available for real-time discussion on irc.freenode.net.</li>
     </ul>
-
   </section>
 
   <!--section class="informative">
@@ -382,6 +404,7 @@ JSON-LD processing.
     </ul>
 
   </section>
+</section>
 
   <section class="informative">
     <h1>Basic Concept</h1>
