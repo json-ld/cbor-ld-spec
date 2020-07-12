@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>CBOR-LD 1.0</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove" defer></script>
+<script src="common/common.js" class="remove" defer></script>
+<script src="common/jsonld.js" class="remove"></script>
+<script class="remove">
+  var respecConfig = {
+      // extend the bibliography entries
+      localBiblio:            jsonld.localBiblio,
+
+      // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+      specStatus:             "ED",
+      // if you wish the publication date to be other than today, set this
+      //publishDate:          "2018-09-11",
+      copyrightStart:         "2020",
+
+      // the specification's short name, as in http://www.w3.org/TR/short-name/
+      shortName:              "cbor-ld",
+      subtitle:               "A CBOR-based Serialization for Linked Data",
+
+      // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+      // and its maturity status
+      // prevVersion:          "https://www.w3.org/TR/2020/PR-json-ld11-20200507/",
+      // previousPublishDate:  "2020-05-07",
+      // previousMaturity:     "PR",
+      // prevRecURI:            "https://www.w3.org/TR/2014/REC-json-ld-20140116/",
+      // errata:               "https://w3c.github.io/json-ld-syntax/errata/",
+      github:               {
+        repoURL:"https://github.com/digitalbazaar/cborld-spec/",
+        branch: "main"
+      },
+
+      // if there a publicly available Editor's Draft, this is the link
+      edDraftURI:             "https://digitalbazaar.github.io/cborld-spec/",
+      // testSuiteURI:           "https://digitalbazaar.github.io/json-ld-api/tests/",
+      // implementationReportURI:"https://digitalbazaar.github.io/json-ld-api/reports/",
+      // crEnd:                  "2020-04-03",
+      // prEnd:                  "2020-06-18",
+
+      includePermalinks:      true,
+      doJsonLd:               true,
+      pluralize:              true,
+
+      // Cross-reference definitions
+      xref: ["json-ld11", "json-ld11-api", "json-ld11-framing"],
+
+      // if you want to have extra CSS, append them to this list
+      // it is recommended that the respec.css stylesheet be kept
+      // extraCSS:             [],
+
+      // editors, add as many as you like
+      // only "name" is required
+      editors:  [
+        { name:       "Manu Sporny",
+          url:        "http://manu.sporny.org/",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"},
+        { name:       "Dave Longley",
+          url:        "https://digitalbazaar.com/author/dlongley/",
+          w3cid:      "48025",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"}
+      ],
+
+      // authors, add as many as you like.
+      // This is optional, uncomment if you have authors as well as editors.
+      // only "name" is required. Same format as editors.
+      authors:  [
+        { name:       "Manu Sporny",
+          url:        "http://manu.sporny.org/",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"},
+        { name:       "Dave Longley",
+          url:        "https://digitalbazaar.com/author/dlongley/",
+          w3cid:      "48025",
+          company:    "Digital Bazaar",
+          companyURL: "https://digitalbazaar.com/"}
+      ],
+
+      // name of the WG
+      wg:           "JSON-LD Community Group",
+
+      // URI of the public WG page
+      wgURI:        "https://www.w3.org/2018/json-ld-wg/",
+
+      // name (with the @w3c.org) of the public mailing to which comments are due
+      wgPublicList: "public-linked-json",
+
+      // URI of the patent status for this WG, for Rec-track documents
+      // !!!! IMPORTANT !!!!
+      // This is important for Rec-track documents, do not copy a patent URI from a random
+      // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+      // Team Contact.
+      wgPatentURI:  "https://www.w3.org/2004/01/pp-impl/107714/status",
+      processVersion: 2018,
+      maxTocLevel: 4,
+      //alternateFormats: [ {uri: "json-ld11.epub", label: "EPUB"} ]
+  };
+</script>
+<style>
+  .hl-bold { font-weight: bold; color: #0a3; }
+  .comment { color: #999; }
+  table, thead, tr, td { padding: 5px; border-width: 1px; border-spacing: 0px; border-style: solid; border-collapse: collapse; }
+  table.example {width: 100%;}
+  .example > pre.context:before {
+    content: "Context";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.frame:before {
+    content: "Frame";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.input:before {
+    content: "Input";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.result:before {
+    content: "Result";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .example > pre.turtle:before {
+    content: "Turtle";
+    float: right;
+    font: x-large Arial, sans-serif;
+    color: gray;
+    border: solid thin black;
+    padding: 0.2em;
+  }
+  .highlight.changed, .show-changes {
+    background-color: lime;
+  }
+  .show-changes.selected:before {
+    content: "de-highlight";
+  }
+  .show-changes:before {
+    content: "highlight";
+  }
+  aside.example {
+    overflow-y: hidden;
+  }
+  /* example tab selection */
+  .ds-selector-tabs {
+    padding-bottom: 2em;
+  }
+  .ds-selector-tabs .selectors {
+    padding: 0;
+    border-bottom: 1px solid #ccc;
+    height: 28px;
+  }
+  .ds-selector-tabs .selectors button {
+    display: inline-block;
+    min-width: 54px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+    height: 27px;
+    padding: 0 8px;
+    line-height: 27px;
+    transition: all,0.218s;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+    color: #666;
+    border: 1px solid transparent;
+  }
+  .ds-selector-tabs .selectors button:first-child {
+    margin-left: 2px;
+  }
+  .ds-selector-tabs .selectors button.selected {
+    color: #202020 !important;
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #fff !important;
+  }
+  .ds-selector-tabs .selectors button:hover {
+    background-color: transparent;
+    color: #202020;
+    cursor: pointer;
+  }
+  .ds-selector-tabs pre:not(.preserve), .ds-selector-tabs table:not(.preserve) {
+    display: none;
+  }
+  .ds-selector-tabs pre.selected, .ds-selector-tabs table.selected {
+    display: block;
+  }
+  a.playground {
+    display: inline-block;
+    width: 150px;
+    border: 1px solid transparent;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+    background-color: rgb(192, 192, 192);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  a[href].playground {
+    padding: 4px 0 3px 8px;
+    border-bottom: none;
+    text-decoration: none;
+    color: #666;
+  }
+</style>
+</head>
+
+<body>
+<section id="abstract">
+
+</section>
+
+<section id="sotd">
+  <p>This document is experimental.</p>
+
+  <p>There is a
+<a href="https://github.com/digitalbazaar/cborld/">reference implementation</a> that is
+capable of demonstrating the features described in this document.
+  </p>
+</section>
+
+<section class="informative">
+  <h1>Introduction</h1>
+
+  <p></p>
+
+  <section class="informative">
+    <h2>How to Read this Document</h2>
+
+    <p>This document is a detailed specification for a serialization of Linked
+      Data in CBOR. The document is primarily intended for the following audiences:</p>
+
+    <ul>
+      <li>Software developers who want to encode Linked Data in a variety of
+        programming languages that can use CBOR</li>
+      <li>Software developers who want to convert existing JSON-LD to CBOR-LD</li>
+      <li>Software developers who want to understand the design decisions and
+        language syntax for CBOR-LD</li>
+      <li>Software developers who want to implement processors and APIs for
+        CBOR-LD</li>
+      <li>Software developers who want to generate or consume Linked Data,
+        an <a>RDF graph</a>, or an <a>RDF Dataset</a> in a CBOR syntax</li>
+    </ul>
+
+  </section>
+
+  <section class="informative">
+    <h2>Contributing</h2>
+
+    <p>There are a number of ways that one may participate in the development of
+      this specification:</p>
+
+    <ul>
+      <li>Technical discussion typically occurs on the working group mailing list:
+        <a href="https://lists.w3.org/Archives/Public/public-linked-json/">public-linked-json@w3.org</a></li>
+
+      <li>The working group uses <a href="http://irc.w3.org/?channels=json-ld">#json-ld</a>
+        IRC channel is available for real-time discussion on <a href="http://irc.w3.org">irc.w3.org</a>.</li>
+
+      <li>The <a href="https://webchat.freenode.net/?channels=json-ld">#json-ld</a>
+        IRC channel is also available for real-time discussion on irc.freenode.net.</li>
+    </ul>
+
+  </section>
+
+  <!--section class="informative">
+    <h2>Typographical conventions</h2>
+    <div data-include="common/typographical-conventions.html"></div>
+  </section>
+
+  <section class="informative">
+    <h2>Terminology</h2>
+
+    <p>This document uses the following terms as defined in external specifications
+      and defines terms specific to JSON-LD.</p>
+
+    <div data-include="common/terms.html"
+         data-oninclude="restrictReferences">
+    </div>
+  </section-->
+
+  <section class="informative">
+    <h2>Design Goals and Rationale</h2>
+
+    <p>CBOR-LD satisfies the following design goals:</p>
+
+    <dl>
+      <dt>Simplicity</dt>
+      <dd>
+Implementations should be simple to implement given an existing JSON-LD
+implementation.
+      </dd>
+      <dt>Efficient Storage</dt>
+      <dd>
+The encoding process should generate an aggressively compact Linked Data binary
+format.
+      </dd>
+      <dt>Generalized Algorithm</dt>
+      <dd>
+The encoding algorithm must be generalized.
+      </dd>
+      <dt>Semantic Compression</dt>
+      <dd>
+The encoding format should maximize compression of Linked Data URLs (terms and
+values). Focusing here ensures that the algorithms can achieve compression
+ratios better than generalized compression algorithms.
+      </dd>
+      <dt>Raw Binary</dt>
+      <dd>
+Base-encoded binary values, and other compressible data types, should be
+translated to their raw binary forms from base-encoded formats when possible
+without sacrificing generality.
+      </dd>
+    </dl>
+
+    <p>
+Similarly, the following are non-goals.
+    </p>
+
+    <ul>
+      <li>
+Theoretical purity.
+      </li>
+      <li>
+Creating new compaction/expansion algorithms specifically for CBOR-LD.
+      </li>
+      <li>
+Large centralized registries for every term on the planet.
+      </li>
+      <li>
+Data formats that require large spec changes or complex implementations to
+roundtrip from JSON-LD to CBOR-LD and back.
+      </li>
+    </ul>
+
+    <p>
+The following minefields have been identified while working on this
+specification:
+    </p>
+
+    <ul>
+      <li>
+While it is widely believed that hashing is fast, it's slower than string
+comparison over a small set of strings. This is true because in order to hash,
+you must consume the entire string. If you are performing string comparisons,
+you can abort the second the byte-for-byte comparison fails. That is, when
+processing two values, string comparison can abort processing and hashing
+cannot. While most globally collision-resistant hashes are 256-bits, 32 byte
+values are large and we can do better in many cases without sacrificing
+collision resistance (which hashing algorithms like blake2b-8 cannot do).
+      </li>
+      <li>
+Anything that requires you to pre-process the JSON-LD data is a non-starter --
+it's expensive, and that means that you are encoding semantics in the data.
+While this can lead to better compression in some cases, it increases the
+complexity of the processors without providing an acceptable return on
+investment.
+      </li>
+      <li>
+Scoped contexts are the most challenging aspect of a more generalized solution.
+The deeper the algorithm has to understand scoping, the more combinatorial the
+problem becomes and thus the more possible compression values there are, which
+harms compression size. The trick is to leverage the determinism in the existing
+JSON-LD Processing algorithms and take shortcuts only when it won't affect
+JSON-LD processing.
+      </li>
+    </ul>
+
+  </section>
+
+  <section class="informative">
+    <h1>Basic Concept</h1>
+
+    <p>
+The general CBOR-LD encoding algorithm takes a JSON-LD Document and does
+the following:
+    </p>
+
+    <ul>
+      <li>
+Determine if JSON-LD can be compressed (@context values in JSON-LD document that
+reference contexts via URLs - embedded context values cannot be compressed)
+      </li>
+      <li>
+Process a JSON-LD Context, building a CBOR-LD compression dictionary -- a list
+of all terms that can be compressed (and whether or not their values can be
+compressed). Sort the list. Associate byte values with each term starting at 0
+and counting up.
+      </li>
+      <li>
+Encoding the JSON-LD Document as CBOR-LD consists of replacing every key with
+the byte value associated with the term. For every value that is `"@type":
+"@id"`, replace the value with the byte value associated with the term.
+      </li>
+      <li>
+Decoding the CBOR-LD Bytes as JSON-LD consists of replacing every CBOR key with
+the associated value in the compression dictionary. For every value that is
+`"@type": "@id"`, replace the value with the byte value associated with the
+term.
+      </li>
+    </ul>
+  </section>
+
+  <section class="normative">
+    <h1>Algorithms</h1>
+
+<section>
+<h2>JSON-LD to CBOR-LD Algorithm</h2>
+
+<p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.</p>
+
+<ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
+<li>Initialize `contextUrls` to the return value of the "Get Context URLs Algorithm" passing jsonldDocument as input.</li>
+<li>If the "Get Context URLs Algorithm" resulted in an error, set `result` to the return value of the "Generate Uncompressed CBOR-LD Algorithm".</li>
+<li>Otherwise, set `result` to the return value of the "Generate Compressed CBOR-LD Algorithm" passing `contextUrls` as `options.contextUrls`.</li>
+<li>Return `result`.</li></ol>
+</section>
+
+<section>
+<h2>Uncompressed CBOR-LD Buffer Algorithm</h2>
+
+<p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.</p>
+
+<ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
+<li>Set the first two bytes (CBOR Tag) to 0x3200 (CBOR-LD - 0x32, Uncompressed - 0x00))</li>
+<li>For every key-value in the map, generate the Uncompressed CBOR-LD Buffer by converting it to the associated CBOR-LD tag and value. For complex values (maps, arrays), recursively convert the value to something that will naturally map back to JSON-LD.</li>
+<li>Return the Uncompressed CBOR-LD Buffer.</li></ol>
+</section>
+<section>
+<h2>Compressed CBOR-LD Buffer Algorithm</h2>
+
+<p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input. The `options` MUST contain a `contextUrls` entry, which is a list of URL strings.</p>
+
+<ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
+<li>Set the first two bytes (CBOR Tag) to 0x3200 (CBOR-LD - 0x32, Compressed - Algorithm Version 1 - 0x01))</li>
+<li>Initialize `compressionDictionary` to the result of the "Get Compression Dictionary" algorithm passing identifiedContexts as input.</li>
+<li>Add to `result` by recursively processing every name-value pair in `jsonldDocument`</li>
+<ol><li>Let `compressionHint` be the value associated with the JSON name in the `compressionDictionary`.</li>
+<li>Set the CBOR key to the `compressionHint.compressedTerm` value.</li>
+<li>Set the CBOR value to the result of the `compressionHint.valueCompressor` function.</li></ol>
+<li>Return `result`.</li></ol>
+</section>
+
+<section>
+<h2>Get Compression Dictionary Algorithm</h2>
+
+<p>This algorithm takes a list of URL strings `contextUrls` and returns a CBOR-LD compression dictionary that maps JSON-LD terms to their associated byte values and value compression functions.</p>
+
+<ol><li>Let `result` be an ordered map.</li>
+<li>For each value in `contextUrls`, dereference the JSON-LD contexts and process every entry.</li>
+<ol><li>Set the entry key to the JSON-LD term key.</li>
+<li>Set the entry value to an unordered map with two entries.</li>
+<ol><li>The first entry should be set to `compressedTerm` with an undefined value.</li>
+<li>Let `compressor` be a known global compressor function associated with the `@type` property, a known local compressor function that was provided to this function, or a the generic CBOR compressor function, which returns the bytes associated with a typical CBOR compression of the given datatype.</li></ol></ol>
+<li>Let `sortedTerms` be the value of sorting all of the keys in `result`.</li>
+<li>For every value in the list of `sortedTerms` set the associated `compressionHint.compressedTerm` value to the associated index of `sortedTerms`.</li>
+<li>Return `result`.</li></ol></ol></ol>
+</section>
+
+<section>
+<h3>Get Context URLs Algorithm</h3>
+
+<ol><li>Let `result` be a ordered map.</li>
+<li>Walk the JSON tree, for each JSON name-value pair:</li>
+<ol><li>If the name is `@context`</li>
+<ol><li>Add all values that are referenced by a URL to `result` where the key in the map is set to the JSON value associated with `@id`.</li></ol>
+<li>If a non-URL value is detected, throw an ERR_NON_URL_JSONLD_CONTEXT_DETECTED error.</li></ol>
+<li>Return `result`.</li></ol>
+</section>
+  </section>
+
+
+</body>
+</html>
