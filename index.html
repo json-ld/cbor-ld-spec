@@ -418,72 +418,159 @@ term.
 
   <section class="normative">
     <h1>Algorithms</h1>
+    <section>
+      <h2>JSON-LD to CBOR-LD Algorithm</h2>
 
-<section>
-<h2>JSON-LD to CBOR-LD Algorithm</h2>
+      <p>
+This algorithm takes a JSON-LD object `jsonldDocument` and `options` as
+input.
+      </p>
 
-<p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.</p>
+      <ol>
+        <li>Let `result` be an empty CBOR-encoded byte array.</li>
+        <li>
+Initialize `contextUrls` to the return value of the "Get Context URLs Algorithm"
+passing jsonldDocument as input.
+        </li>
+        <li>
+If the "Get Context URLs Algorithm" resulted in an error, set `result` to the
+return value of the "Generate Uncompressed CBOR-LD Algorithm".
+        </li>
+        <li>
+Otherwise, set `result` to the return value of the "Generate Compressed CBOR-LD
+Algorithm" passing `contextUrls` as `options.contextUrls`.
+        </li>
+        <li>Return `result`.</li>
+      </ol>
+    </section>
 
-<ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
-<li>Initialize `contextUrls` to the return value of the "Get Context URLs Algorithm" passing jsonldDocument as input.</li>
-<li>If the "Get Context URLs Algorithm" resulted in an error, set `result` to the return value of the "Generate Uncompressed CBOR-LD Algorithm".</li>
-<li>Otherwise, set `result` to the return value of the "Generate Compressed CBOR-LD Algorithm" passing `contextUrls` as `options.contextUrls`.</li>
-<li>Return `result`.</li></ol>
-</section>
+    <section>
+      <h2>Uncompressed CBOR-LD Buffer Algorithm</h2>
 
-<section>
-<h2>Uncompressed CBOR-LD Buffer Algorithm</h2>
+      <p>
+This algorithm takes a JSON-LD object `jsonldDocument` and `options` as
+input.
+      </p>
 
-<p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.</p>
+      <ol>
+        <li>Let `result` be an empty CBOR-encoded byte array.</li>
+        <li>
+Set the first two bytes (CBOR Tag) to 0x5000 (CBOR-LD - 0x50, Uncompressed -
+0x00))
+        </li>
+        <li>
+For every key-value in the map, generate the Uncompressed CBOR-LD
+Buffer by converting it to the associated CBOR-LD tag and value. For
+complex values (maps, arrays), recursively convert the value to
+something that will naturally map back to JSON-LD.
+        </li>
+        <li>Return the Uncompressed CBOR-LD Buffer.</li>
+      </ol>
+    </section>
+    <section>
+      <h2>Compressed CBOR-LD Buffer Algorithm</h2>
 
-<ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
-<li>Set the first two bytes (CBOR Tag) to 0x5000 (CBOR-LD - 0x50, Uncompressed - 0x00))</li>
-<li>For every key-value in the map, generate the Uncompressed CBOR-LD Buffer by converting it to the associated CBOR-LD tag and value. For complex values (maps, arrays), recursively convert the value to something that will naturally map back to JSON-LD.</li>
-<li>Return the Uncompressed CBOR-LD Buffer.</li></ol>
-</section>
-<section>
-<h2>Compressed CBOR-LD Buffer Algorithm</h2>
+      <p>
+This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.
+The `options` MUST contain a `contextUrls` entry, which is a list of URL
+strings.
+      </p>
 
-<p>This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input. The `options` MUST contain a `contextUrls` entry, which is a list of URL strings.</p>
+      <ol>
+        <li>Let `result` be an empty CBOR-encoded byte array.</li>
+        <li>
+Set the first two bytes (CBOR Tag) to 0x5001 (CBOR-LD - 0x50, Compressed -
+Algorithm Version 1 - 0x01))
+        </li>
+        <li>
+Initialize `compressionDictionary` to the result of the "Get Compression
+Dictionary" algorithm passing identifiedContexts as input.
+        </li>
+        <li>
+Add to `result` by recursively processing every name-value pair in
+`jsonldDocument`
+        </li>
+        <ol>
+          <li>
+Let `compressionHint` be the value associated with the JSON name in the
+`compressionDictionary`.</li>
+          <li>
+Set the CBOR key to the `compressionHint.compressedTerm` value.</li>
+          <li>
+Set the CBOR value to the result of the `compressionHint.valueCompressor`
+function.</li>
+        </ol>
+        <li>Return `result`.</li>
+      </ol>
+    </section>
 
-<ol><li>Let `result` be an empty CBOR-encoded byte array.</li>
-<li>Set the first two bytes (CBOR Tag) to 0x5001 (CBOR-LD - 0x50, Compressed - Algorithm Version 1 - 0x01))</li>
-<li>Initialize `compressionDictionary` to the result of the "Get Compression Dictionary" algorithm passing identifiedContexts as input.</li>
-<li>Add to `result` by recursively processing every name-value pair in `jsonldDocument`</li>
-<ol><li>Let `compressionHint` be the value associated with the JSON name in the `compressionDictionary`.</li>
-<li>Set the CBOR key to the `compressionHint.compressedTerm` value.</li>
-<li>Set the CBOR value to the result of the `compressionHint.valueCompressor` function.</li></ol>
-<li>Return `result`.</li></ol>
-</section>
+    <section>
+      <h2>Get Compression Dictionary Algorithm</h2>
 
-<section>
-<h2>Get Compression Dictionary Algorithm</h2>
+      <p>
+This algorithm takes a list of URL strings `contextUrls` and returns a CBOR-LD
+compression dictionary that maps JSON-LD terms to their associated byte values
+and value compression functions.
+      </p>
 
-<p>This algorithm takes a list of URL strings `contextUrls` and returns a CBOR-LD compression dictionary that maps JSON-LD terms to their associated byte values and value compression functions.</p>
+      <ol>
+        <li>Let `result` be an ordered map.</li>
+        <li>
+For each value in `contextUrls`, dereference the JSON-LD contexts and process
+every entry.
+        </li>
+        <ol>
+          <li>Set the entry key to the JSON-LD term key.</li>
+          <li>Set the entry value to an unordered map with two entries.</li>
+          <ol>
+            <li>
+The first entry should be set to `compressedTerm` with an undefined value.
+            </li>
+            <li>
+Let `compressor` be a known global compressor function associated with the
+`@type` property, a known local compressor function that was provided to this
+function, or a the generic CBOR compressor function, which returns the bytes
+associated with a typical CBOR compression of the given datatype.
+            </li>
+          </ol>
+        </ol>
+        <li>
+Let `sortedTerms` be the value of sorting all of the keys in `result`.
+        </li>
+        <li>
+For every value in the list of `sortedTerms` set the associated
+`compressionHint.compressedTerm` value to the associated index of `sortedTerms`.
+        </li>
+        <li>Return `result`.</li>
+      </ol>
+      </ol>
+      </ol>
+    </section>
 
-<ol><li>Let `result` be an ordered map.</li>
-<li>For each value in `contextUrls`, dereference the JSON-LD contexts and process every entry.</li>
-<ol><li>Set the entry key to the JSON-LD term key.</li>
-<li>Set the entry value to an unordered map with two entries.</li>
-<ol><li>The first entry should be set to `compressedTerm` with an undefined value.</li>
-<li>Let `compressor` be a known global compressor function associated with the `@type` property, a known local compressor function that was provided to this function, or a the generic CBOR compressor function, which returns the bytes associated with a typical CBOR compression of the given datatype.</li></ol></ol>
-<li>Let `sortedTerms` be the value of sorting all of the keys in `result`.</li>
-<li>For every value in the list of `sortedTerms` set the associated `compressionHint.compressedTerm` value to the associated index of `sortedTerms`.</li>
-<li>Return `result`.</li></ol></ol></ol>
-</section>
+    <section>
+      <h3>Get Context URLs Algorithm</h3>
 
-<section>
-<h3>Get Context URLs Algorithm</h3>
-
-<ol><li>Let `result` be a ordered map.</li>
-<li>Walk the JSON tree, for each JSON name-value pair:</li>
-<ol><li>If the name is `@context`</li>
-<ol><li>Add all values that are referenced by a URL to `result` where the key in the map is set to the JSON value associated with `@id`.</li></ol>
-<li>If a non-URL value is detected, throw an ERR_NON_URL_JSONLD_CONTEXT_DETECTED error.</li></ol>
-<li>Return `result`.</li></ol>
-</section>
+      <ol>
+        <li>Let `result` be a ordered map.</li>
+        <li>Walk the JSON tree, for each JSON name-value pair:</li>
+        <ol>
+          <li>If the name is `@context`</li>
+          <ol>
+            <li>
+Add all values that are referenced by a URL to `result` where the key in the map
+is set to the JSON value associated with `@id`.
+            </li>
+          </ol>
+          <li>
+If a non-URL value is detected, throw an ERR_NON_URL_JSONLD_CONTEXT_DETECTED
+error.
+          </li>
+        </ol>
+        <li>Return `result`.</li>
+      </ol>
+    </section>
   </section>
-
+</section>
 
 </body>
 </html>
