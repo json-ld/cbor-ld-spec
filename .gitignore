@@ -1,0 +1,8 @@
+*.sw[nop]
+*~
+.DS_Store
+.cache
+.project
+.settings
+.vscode
+TAGS
