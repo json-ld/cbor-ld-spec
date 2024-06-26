@@ -451,7 +451,7 @@ its creation to be able to reconstruct the term codec map.
     </p>
     <p>
 To this end, we have registered the range of CBOR tags 1500-1800** to be used for CBOR-LD,
-where tag values are used to lookup what `Application Context Table`(s) should be used
+where data that includes tag value is used to lookup what `Application Context Table`(s) should be used
 to decompress the CBOR-LD context URLs.
     </p>
     <p>
@@ -460,7 +460,23 @@ to decompress the CBOR-LD context URLs.
 Tag Registry</a>. The exact range is subject to change.
     </p>
     <section>
-      <h2>CBOR-LD </h2>
+      <h2>CBOR-LD Varint Registry</h2>
+      <p>
+A global list of CBOR-LD tags, the <b>CBOR-LD Varint Registry</b> is maintained that provides
+consumers of CBOR-LD payloads the information they need to reconstruct the term codec map
+required for decompression. A  <b>CBOR-LD Varint Registry Entry</b> contains the following:
+        <ol>
+          <li>
+<b>varint Value</b>: an integer in the range 1500-1800.
+          </li>
+          <li>
+<b>Use Case</b>: what type of CBOR-LD payload this entry is used for.
+          </li>
+          <li>
+<b>Context Decompression Needs</b>: what type of CBOR-LD payload this entry is used for.
+          </li>
+        </ol>
+      </p>
     </section>
   </section>
 
