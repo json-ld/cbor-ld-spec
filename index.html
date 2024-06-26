@@ -460,9 +460,27 @@ to decompress the CBOR-LD context URLs.
 Tag Registry</a>. The exact range is subject to change.
     </p>
     <section>
+      <h2>CBOR-LD Varint</h2>
+      <p>
+To enable unbounded extension on possible use cases for CBOR-LD that require different
+`Application Context Table` material for consumption while working within a fixed number of
+CBOR tag values, we define the following.
+      </p>
+      <p>
+Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
+as the beginning of a varint. If the CBOR tag is `0x0680`, the first item in the CBOR payload
+MUST be a major type 2 byte string containing the rest of the varint. See Algorithm TODO for
+more information.
+      </p>
+      <p>
+The value of this varint is then used to lookup a <b>CBOR-LD Varint Registry Entry</b> in the
+<b>CBOR-LD Varint Registry</b>.
+      </p>
+    </section>
+    <section>
       <h2>CBOR-LD Varint Registry</h2>
       <p>
-A global list of CBOR-LD tags, the <b>CBOR-LD Varint Registry</b> is maintained that provides
+The <b>CBOR-LD Varint Registry</b> is a global list that provides
 consumers of CBOR-LD payloads the information they need to reconstruct the term codec map
 required for decompression. A  <b>CBOR-LD Varint Registry Entry</b> contains the following:
         <ol>
