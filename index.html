@@ -441,6 +441,30 @@ term.
   </section>
 
   <section class="normative">
+    <h1>CBOR Tags for CBOR-LD</h1>
+    <p>
+The first step in decoding a CBOR-LD payload is to recreate the term codec
+map that was used to encode it by processing the contexts in the payload. However,
+as these context URLs are encoded as integers, the consumer of the CBOR-LD
+must know what `Application Context Table` (map from URL to integer) was used in
+its creation to be able to reconstruct the term codec map.
+    </p>
+    <p>
+To this end, we have registered the range of CBOR tags 1500-1800** to be used for CBOR-LD,
+where tag values are used to lookup what `Application Context Table`(s) should be used
+to decompress the CBOR-LD context URLs.
+    </p>
+    <p>
+<b>**Note:</b> this exact range of tag values has not yet been officially registered with
+<a href="https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml">the IANA CBOR
+Tag Registry</a>. The exact range is subject to change.
+    </p>
+    <section>
+      <h2>CBOR-LD </h2>
+    </section>
+  </section>
+
+  <section class="normative">
     <h1>Algorithms</h1>
     <section>
       <h2>JSON-LD to CBOR-LD Algorithm</h2>
