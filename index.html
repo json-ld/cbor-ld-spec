@@ -487,42 +487,83 @@ consumers of CBOR-LD payloads the information they need to reconstruct the term 
 required for decompression. A  <b>CBOR-LD Varint Registry Entry</b> contains the following:
         <ol>
           <li>
-<b>varint Value</b>: an integer in the range 1500-1800.
+varint Value: an integer in the range 1500-1800.
           </li>
           <li>
-<b>Use Case</b>: what type of CBOR-LD payload this entry is used for.
+Use Case: what type of CBOR-LD payload this entry is used for.
           </li>
           <li>
-<b>Context Tables</b>: what type of CBOR-LD payload this entry is used for.
+`contextTables`: an array containing what `Application Context Tables` must be used for this
+type of payload..
           </li>
         </ol>
       </p>
       <p>
-The `Context Tables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
+The `contextTables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
 URLs. The only exception is the string "callerProvidedTable", which may appear in this array,
 denoting that for this use case, an `Application Context Table` is required which is not globally
 defined.
-
-Dereferencing one of these URLs MUST result in a JSON object with the following properties:
       </p>
+      <p></p>
+Dereferencing one of these URLs MUST result in a JSON object with the following properties:
       <ol>
-        `compression`: a JSON object that maps URLs to integers.
-        `decompression`: a JSON object that maps integers to URLs.
+        <li>
+`compressionMap`: a JSON object that maps URLs to integers.
+        </li>
+        <li>
+`decompressionMap`: a JSON object that maps integers to URLs.
+        </li>
       </ol>
-`compression` and `decompression` MUST be inverse maps (i.e. `decompression` is identical to
+`compressionMap` and `decompressionMap` MUST be inverse maps (i.e. `decompression` is identical to
 `compression`, but with keys and values swapped).
       </p>
       <p>
+If multiple `Application Context Tables` exist in a single <b>CBOR-LD Varint Registry Entry</b>,
+these tables MUST NOT share any integer or URL values between them.
       </p>
     </section>
-    <section>
-      <h2>CBOR-LD Varint Registry Entry Tables</h2>
-      <p>
-Aside from the varint value that identifies a <b>CBOR-LD Varint Registry Entry</b> and its use
-case, an entry contains specification of what `Application Context Table`(s) are needed for
-decompression.
-      </p>
 
+    <section class="informative">
+      <h2>CBOR Varint Registry Example</h2>
+TODO: ok to have informative subsection of normative section? If not, ok to have examples in
+normative section?
+      <p>
+As as example, take the following one-entry <b>CBOR-LD Varint Registry</b>:
+      </p>
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Value</th>
+            <th>Use Case</th>
+            <th>contextTables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          <td>100</td>
+          <td>Specification Example</td>
+          <td>["https://example.cborld.com/table1", "https://example.cborld.com/table2"]</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+Dereferencing "https://example.cborld.com/table1" might then return:
+      </p>
+      <pre class="example nohighlight"
+             title="Example results derefencing contextTables entries">
+{
+  "compressionMap":
+    {
+      "https://w3id.org/ns/credentials/v2": 32900,
+      "https://example.cborld.com/context1": 32901
+    },
+  "decompressionMap":
+    {
+      32900: "https://w3id.org/ns/credentials/v2",
+      32901: "https://example.cborld.com/context1"
+    }
+}
+        </pre>
     </section>
   </section>
 
