@@ -447,7 +447,9 @@ The first step in decoding a CBOR-LD payload is to recreate the term codec
 map that was used to encode it by processing the contexts in the payload. However,
 as these context URLs are encoded as integers, the consumer of the CBOR-LD
 must know what `Application Context Table` (map from URL to integer) was used in
-its creation to be able to reconstruct the term codec map.
+its creation to be able to reconstruct the term codec map. The following sections
+define the exact mechanism by which this can be accomplished, allowing an arbitrary
+CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
     </p>
     <p>
 To this end, we have registered the range of CBOR tags 1500-1800** to be used for CBOR-LD,
@@ -491,10 +493,36 @@ required for decompression. A  <b>CBOR-LD Varint Registry Entry</b> contains the
 <b>Use Case</b>: what type of CBOR-LD payload this entry is used for.
           </li>
           <li>
-<b>Context Decompression Needs</b>: what type of CBOR-LD payload this entry is used for.
+<b>Context Tables</b>: what type of CBOR-LD payload this entry is used for.
           </li>
         </ol>
       </p>
+      <p>
+The `Context Tables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
+URLs. The only exception is the string "callerProvidedTable", which may appear in this array,
+denoting that for this use case, an `Application Context Table` is required which is not globally
+defined.
+
+Dereferencing one of these URLs MUST result in a JSON object with the following properties:
+      </p>
+      <ol>
+        `compression`: a JSON object that maps URLs to integers.
+        `decompression`: a JSON object that maps integers to URLs.
+      </ol>
+`compression` and `decompression` MUST be inverse maps (i.e. `decompression` is identical to
+`compression`, but with keys and values swapped).
+      </p>
+      <p>
+      </p>
+    </section>
+    <section>
+      <h2>CBOR-LD Varint Registry Entry Tables</h2>
+      <p>
+Aside from the varint value that identifies a <b>CBOR-LD Varint Registry Entry</b> and its use
+case, an entry contains specification of what `Application Context Table`(s) are needed for
+decompression.
+      </p>
+
     </section>
   </section>
 
