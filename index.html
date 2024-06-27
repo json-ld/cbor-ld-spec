@@ -446,14 +446,14 @@ term.
 The first step in decoding a CBOR-LD payload is to recreate the term codec
 map that was used to encode it by processing the contexts in the payload. However,
 as these context URLs are encoded as integers, the consumer of the CBOR-LD
-must know what `Application Context Table` (map from URL to integer) was used in
+must know what `Application Context Table` (map from context URLs to integers) was used in
 its creation to be able to reconstruct the term codec map. The following sections
 define the exact mechanism by which this can be accomplished, allowing an arbitrary
 CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
     </p>
     <p>
 To this end, we have registered the range of CBOR tags 1500-1800** to be used for CBOR-LD,
-where data that includes tag value is used to lookup what `Application Context Table`(s) should be used
+where data that includes tag value is used to lookup what `Application Context Table`(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
     <p>
@@ -573,24 +573,40 @@ Dereferencing "https://example.cborld.com/table1" might then return:
       <h2>JSON-LD to CBOR-LD Algorithm</h2>
 
       <p>
-This algorithm takes a JSON-LD object `jsonldDocument` and `options` as
-input.
+This algorithm takes JSON-LD objects `jsonldDocument` and `options` as well 
+as an integer `varintValue` as input.
       </p>
 
       <ol>
         <li>Let `result` be an empty CBOR-encoded byte array.</li>
         <li>
-Initialize `contextUrls` to the return value of the "Get Context URLs Algorithm"
-passing jsonldDocument as input.
+Set {varintTagValue, varintBytesValue} to the return value of the "Get CBOR Varint Structure
+Algorithm", passing `varintValue` as input.
         </li>
         <li>
-If the "Get Context URLs Algorithm" resulted in an error, set `result` to the
+If the "Get CBOR Varint Structure Algorithm" resulted in an error, set `result` to the
 return value of the "Generate Uncompressed CBOR-LD Algorithm".
         </li>
         <li>
-Otherwise, set `result` to the return value of the "Generate Compressed CBOR-LD
-Algorithm" passing `contextUrls` as `options.contextUrls`.
-        </li>
+Otherwise:
+          <ol>
+            <li>
+Initialize `contextUrls` to an empty map.
+            </li>
+            <li>
+For each entry in the `contextTables` array in the <b>CBOR-LD Varint Registry Entry</b> 
+associated with `varintValue`, dereference the URL and add all entries in the
+`compressionMap` map in the resulting document to `contextUrls`. If "callerProvidedTable" appears
+in `contextTables`, populate `contextUrls` with `options.callerProvidedTable` as well.
+            </li>
+            <li>
+Set `result` to the return value of the "Generate Compressed CBOR-LD
+Algorithm" passing `contextUrls` as `options.contextUrls`, `varintTagValue` as
+`options.varintTagValue`, and `varintBytesValue` as `options.varintBytesValue`.
+            </li>
+            
+          </ol>
+
         <li>Return `result`.</li>
       </ol>
     </section>
