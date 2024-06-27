@@ -446,14 +446,14 @@ term.
 The first step in decoding a CBOR-LD payload is to recreate the term codec
 map that was used to encode it by processing the contexts in the payload. However,
 as these context URLs are encoded as integers, the consumer of the CBOR-LD
-must know what `Application Context Table` (map from context URLs to integers) was used in
-its creation to be able to reconstruct the term codec map. The following sections
-define the exact mechanism by which this can be accomplished, allowing an arbitrary
-CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
+must know what `Compression Table` (map from JSON-LD terms to integers) was used to
+compress the context URLs during creation to be able to reconstruct the term codec map. 
+The following sections define the exact mechanism by which this can be accomplished, allowing 
+an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
     </p>
     <p>
 To this end, we have registered the range of CBOR tags 1500-1800** to be used for CBOR-LD,
-where data that includes tag value is used to lookup what `Application Context Table`(s) are needed
+where data that includes tag value is used to lookup what `Compression Table`(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
     <p>
@@ -465,7 +465,7 @@ Tag Registry</a>. The exact range is subject to change.
       <h2>CBOR-LD Varint</h2>
       <p>
 To enable unbounded extension on possible use cases for CBOR-LD that require different
-`Application Context Table` material for consumption while working within a fixed number of
+`Compression Table` material for consumption while working within a fixed number of
 CBOR tag values, we define the following.
       </p>
       <p>
@@ -487,46 +487,51 @@ consumers of CBOR-LD payloads the information they need to reconstruct the term 
 required for decompression. A  <b>CBOR-LD Varint Registry Entry</b> contains the following:
         <ol>
           <li>
-varint Value: an integer in the range 1500-1800.
+varint Value: an integer no smaller than 1500.
           </li>
           <li>
 Use Case: what type of CBOR-LD payload this entry is used for.
           </li>
           <li>
-`contextTables`: an array containing what `Application Context Tables` must be used for this
-type of payload..
+`compressionTables`: an array containing what `Compression Tables` must be used for this
+type of payload.
           </li>
         </ol>
       </p>
       <p>
 The `contextTables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
 URLs. The only exception is the string "callerProvidedTable", which may appear in this array,
-denoting that for this use case, an `Application Context Table` is required which is not globally
+denoting that for this use case, a `Compression Table` is required which is not globally
 defined.
       </p>
       <p></p>
 Dereferencing one of these URLs MUST result in a JSON object with the following properties:
       <ol>
         <li>
-`compressionMap`: a JSON object that maps URLs to integers.
+`contextCompressionMap`: a JSON object that maps URLs to integers.
         </li>
         <li>
-`decompressionMap`: a JSON object that maps integers to URLs.
+`contextDecompressionMap`: a JSON object that maps integers to URLs.
+        </li>
+        <li>
+`termCompressionMap`: a JSON object that maps JSON-LD terms to integers.
+        </li>
+        <li>
+`termDecompressionMap`: a JSON object that maps integers to JSON-LD terms.
         </li>
       </ol>
-`compressionMap` and `decompressionMap` MUST be inverse maps (i.e. `decompression` is identical to
-`compression`, but with keys and values swapped).
+`contextCompressionMap` and `contextDecompressionMap` MUST be inverse maps 
+(i.e. `decompression` is identical to `compression`, but with keys and values swapped).
+Similarly. `termCompressionMap` and `termDecompressionMap` MUST be inverse maps.
       </p>
       <p>
-If multiple `Application Context Tables` exist in a single <b>CBOR-LD Varint Registry Entry</b>,
-these tables MUST NOT share any integer or URL values between them.
+If multiple `Compression Tables` exist in a single <b>CBOR-LD Varint Registry Entry</b>,
+these tables MUST NOT share any integers, URLs, or JSON-LD terms between them.
       </p>
     </section>
 
     <section class="informative">
       <h2>CBOR Varint Registry Example</h2>
-TODO: ok to have informative subsection of normative section? If not, ok to have examples in
-normative section?
       <p>
 As as example, take the following one-entry <b>CBOR-LD Varint Registry</b>:
       </p>
@@ -552,15 +557,25 @@ Dereferencing "https://example.cborld.com/table1" might then return:
       <pre class="example nohighlight"
              title="Example results derefencing contextTables entries">
 {
-  "compressionMap":
+  "contextCompressionMap":
     {
       "https://w3id.org/ns/credentials/v2": 32900,
       "https://example.cborld.com/context1": 32901
     },
-  "decompressionMap":
+  "contextDecompressionMap":
     {
       32900: "https://w3id.org/ns/credentials/v2",
       32901: "https://example.cborld.com/context1"
+    },
+  "termCompressionMap":
+    {
+      "ecdsa-xi-2023": 35000,
+      "ecdsa-rdfc-2019": 35001
+    },
+  "termDecompressionMap":
+    {
+      35000: "ecdsa-xi-2023",
+      35001: "ecdsa-rdfc-2019"
     }
 }
         </pre>
@@ -642,7 +657,7 @@ This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.
 The `options` MUST contain:
       </p>
       <dl>
-        <dt>`applicationContextMap`</dt>
+        <dt>`contextUrls`</dt>
         <dd>
 A map of application-specific JSON-LD context URL strings that are mapped to
 their encoded CBOR-LD values. The values MUST be values greater than
