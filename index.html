@@ -452,7 +452,7 @@ The following sections define the exact mechanism by which this can be accomplis
 an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
     </p>
     <p>
-To this end, we have registered the range of CBOR tags 1500-1800** to be used for CBOR-LD,
+To this end, we have registered the range of CBOR tags 1536-1791** (0x0600-0x06FF) to be used for CBOR-LD,
 where data that includes tag value is used to lookup what `Compression Table`(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
@@ -485,10 +485,10 @@ The value of this varint is then used to lookup a <b>CBOR-LD Varint Registry Ent
       <p>
 The <b>CBOR-LD Varint Registry</b> is a global list that provides
 consumers of CBOR-LD payloads the information they need to reconstruct the term codec map
-required for decompression. A  <b>CBOR-LD Varint Registry Entry</b> contains the following:
+required for decompression. A <b>CBOR-LD Varint Registry Entry</b> contains the following:
         <ol>
           <li>
-varint Value: an integer no smaller than 1500.
+varint Value: an integer no smaller than 1536.
           </li>
           <li>
 Use Case: what type of CBOR-LD payload this entry is used for.
