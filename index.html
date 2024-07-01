@@ -445,10 +445,11 @@ term.
     <p>
 The first step in decoding a CBOR-LD payload is to recreate the term codec
 map that was used to encode it by processing the contexts in the payload. However,
-as these context URLs are encoded as integers, the consumer of the CBOR-LD
-must know what `Compression Table` (map from JSON-LD terms to integers) was used to
-compress the context URLs during creation to be able to reconstruct the term codec map. 
-The following sections define the exact mechanism by which this can be accomplished, allowing 
+the contexts needed to create the term codec map can have their URLs encoded as integers
+by CBOR-LD. If a CBOR-LD payload contains context URLs compressed in such a way, the
+consumer of the CBOR-LD must know what `Compression Table` (map from JSON-LD terms to integers)
+was used to compress the context URLs during creation to be able to reconstruct the term codec
+map. The following sections define the exact mechanism by which this can be accomplished, allowing 
 an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
     </p>
     <p>
@@ -470,7 +471,8 @@ CBOR tag values, we define the following.
       </p>
       <p>
 Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
-as the beginning of a varint. If the CBOR tag is `0x0680`, the first item in the CBOR payload
+as the beginning of a varint. If the CBOR tag is in the range (0x0600-0x067F), the last byte of
+the CBOR tag is a one-byte varint. If the CBOR tag is `0x0680`, the first item in the CBOR payload
 MUST be a major type 2 byte string containing the rest of the varint. See Algorithm <a
 href="#get-cbor-ld-varint-structure-algorithm"></a> for
 more information.
