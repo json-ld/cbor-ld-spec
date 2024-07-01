@@ -471,7 +471,8 @@ CBOR tag values, we define the following.
       <p>
 Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
 as the beginning of a varint. If the CBOR tag is `0x0680`, the first item in the CBOR payload
-MUST be a major type 2 byte string containing the rest of the varint. See Algorithm TODO for
+MUST be a major type 2 byte string containing the rest of the varint. See Algorithm <a
+href="#get-cbor-ld-varint-structure-algorithm"></a> for
 more information.
       </p>
       <p>
@@ -521,8 +522,9 @@ Dereferencing one of these URLs MUST result in a JSON object with the following 
         </li>
       </ol>
 `contextCompressionMap` and `contextDecompressionMap` MUST be inverse maps 
-(i.e. `decompression` is identical to `compression`, but with keys and values swapped).
-Similarly. `termCompressionMap` and `termDecompressionMap` MUST be inverse maps.
+(i.e. `contextDecompressionMap` is identical to `contextCompressionMap`, but with keys an
+values swapped). Similarly. `termCompressionMap` and `termDecompressionMap` MUST be inverse
+maps.
       </p>
       <p>
 If multiple `Compression Tables` exist in a single <b>CBOR-LD Varint Registry Entry</b>,
@@ -595,7 +597,7 @@ as an integer `varintValue` as input.
       <ol>
         <li>Let `result` be an empty CBOR-encoded byte array.</li>
         <li>
-Set {varintTagValue, varintBytesValue} to the return value of the "Get CBOR-LD Varint Structure
+Set {`varintTagValue`, `varintBytesValue`} to the return value of the "Get CBOR-LD Varint Structure
 Algorithm", passing `varintValue` as input.
         </li>
         <li>
@@ -684,7 +686,7 @@ The bytes that will make up the rest of the CBOR-LD varint.
 Let `result` be an empty CBOR-encoded byte array.
         </li>
         <li>
-Set the first three bytes of `result` to `options.varintTagValue'.
+Set the first three bytes of `result` to `options.varintTagValue`.
         </li>
         <li>
 If `options.varintBytesValue` is not `null`, set the next bytes of
@@ -781,40 +783,41 @@ error.
         <li>Return `result`.</li>
       </ol>
     </section>
+    <section>
+      <h3>Get CBOR-LD Varint Structure Algorithm</h3>
+  This algorithm takes as input an integer `varintValue`.
+      <ol>
+        <li>
+  If `varintValue` is less than 128:
+          <ol>
+            <li>
+              Set `varintEncoded` to the byte encoding of `varintValue.
+            </li>
+            <li>
+    Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
+    0xD906, and set `varintBytesValue` to `null`.
+            </li>
+          </ol>
+        </li>
+        <li>
+  Otherwise:
+          <ol>
+            <li>
+  Set `varintTagValue` to 0xD90680.
+            </li>
+            <li>
+  Set `varintBytesValue` to a CBOR major type 2 bytes object containing a varint representation
+  of `varintValue`.
+            </li>
+          </ol>
+        </li>
+        <li>
+  Return {varintTagValue, varintBytesValue}.
+        </li>
+      </ol>
+    </section>
   </section>
-  <section>
-    <h3>Get CBOR-LD Varint Structure</h3>
-This algorithm takes as input an integer `varintValue`.
-    <ol>
-      <li>
-If `varintValue` is less than 128:
-        <ol>
-          <li>
-            Set `varintEncoded` to the byte encoding of `varintValue.
-          </li>
-          <li>
-  Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
-  0xD906, and set `varintBytesValue` to `null`.
-          </li>
-        </ol>
-      </li>
-      <li>
-Otherwise:
-        <ol>
-          <li>
-Set `varintTagValue` to 0xD90680.
-          </li>
-          <li>
-Set `varintBytesValue` to a CBOR major type 2 bytes object containing a varint representation
-of `varintValue`.
-          </li>
-        </ol>
-      </li>
-      <li>
-Return {varintTagValue, varintBytesValue}.
-      </li>
-    </ol>
-  </section>
+  
 
   <section class="appendix">
     <h1>Term Codec Registry</h1>
