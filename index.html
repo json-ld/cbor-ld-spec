@@ -793,7 +793,7 @@ If `varintValue` is less than 128:
             Set `varintEncoded` to the byte encoding of `varintValue.
           </li>
           <li>
-  Set 'varintTagValue' to the result of appending `varintEncoded` to the end of the bytes
+  Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
   0xD906, and set `varintBytesValue` to `null`.
           </li>
         </ol>
@@ -802,10 +802,10 @@ If `varintValue` is less than 128:
 Otherwise:
         <ol>
           <li>
-Set 'varintTagValue' to 0xD90680.
+Set `varintTagValue` to 0xD90680.
           </li>
           <li>
-Set 'varintBytesValue' to a CBOR major type 2 bytes object containing a varint representation
+Set `varintBytesValue` to a CBOR major type 2 bytes object containing a varint representation
 of `varintValue`.
           </li>
         </ol>
