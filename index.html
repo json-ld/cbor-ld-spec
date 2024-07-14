@@ -447,14 +447,14 @@ The first step in decoding a CBOR-LD payload is to recreate the term codec
 map that was used to encode it by processing the contexts in the payload. However,
 the contexts needed to create the term codec map can have their URLs encoded as integers
 by CBOR-LD. If a CBOR-LD payload contains context URLs compressed in such a way, the
-consumer of the CBOR-LD must know what `Compression Table` (map from JSON-LD terms to integers)
+consumer of the CBOR-LD must know what compression tables (maps from JSON-LD terms to integers)
 was used to compress the context URLs during creation to be able to reconstruct the term codec
 map. The following sections define the exact mechanism by which this can be accomplished, allowing 
 an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
     </p>
     <p>
 To this end, we have registered the range of CBOR tags 1536-1791** (0x0600-0x06FF) to be used for CBOR-LD,
-where data that includes tag value is used to lookup what `Compression Table`(s) are needed
+where data that includes tag value is used to lookup what compression table(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
     <p>
@@ -466,7 +466,7 @@ Tag Registry</a>. The exact range is subject to change.
       <h2>CBOR-LD Varint</h2>
       <p>
 To enable unbounded extension on possible use cases for CBOR-LD that require different
-`Compression Table` material for consumption while working within a fixed number of
+compression table material for consumption while working within a fixed number of
 CBOR tag values, we define the following.
       </p>
       <p>
@@ -588,57 +588,6 @@ The following is the current CBOR-LD registry:
       </table>
 
     </section>
-
-    <section class="informative">
-      <h2>CBOR Varint Registry Example</h2>
-      <p>
-As as example, take th one-entry <b>CBOR-LD Varint Registry</b>:
-      </p>
-      <table class="simple">
-        <thead>
-          <tr>
-            <th>Value</th>
-            <th>Use Case</th>
-            <th>contextTables</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          <td>100</td>
-          <td>Specification Example</td>
-          <td>["https://example.cborld.com/table1", "https://example.cborld.com/table2"]</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>
-Dereferencing "https://example.cborld.com/table1" might then return:
-      </p>
-      <pre class="example nohighlight"
-             title="Example results derefencing contextTables entries">
-{
-  "contextCompressionMap":
-    {
-      "https://w3id.org/ns/credentials/v2": 32900,
-      "https://example.cborld.com/context1": 32901
-    },
-  "contextDecompressionMap":
-    {
-      32900: "https://w3id.org/ns/credentials/v2",
-      32901: "https://example.cborld.com/context1"
-    },
-  "termCompressionMap":
-    {
-      "ecdsa-xi-2023": 35000,
-      "ecdsa-rdfc-2019": 35001
-    },
-  "termDecompressionMap":
-    {
-      35000: "ecdsa-xi-2023",
-      35001: "ecdsa-rdfc-2019"
-    }
-}
-        </pre>
-    </section>
   </section>
 
   <section class="normative">
@@ -689,15 +638,15 @@ and `varintBytesValue` as `options.varintBytesValue`.
       <h2>Uncompressed CBOR-LD Buffer Algorithm</h2>
 
       <p>
-This algorithm takes a JSON-LD object `jsonldDocument` and `options` as
-input.
+This algorithm takes a JSON-LD object `jsonldDocument`, integer `registryValue` and 
+`options` as input.
       </p>
 
       <ol>
         <li>Let `result` be an empty CBOR-encoded byte array.</li>
         <li>
-Set the first two bytes (CBOR Tag) to 0x0500 (CBOR-LD - 0x05, Uncompressed -
-0x00, Tag 1280))
+Set the first two bytes (CBOR Tag) to 0x0600 (CBOR-LD - 0x06, Uncompressed -
+0x00)
         </li>
         <li>
 For every key-value in the map, generate the Uncompressed CBOR-LD
@@ -875,7 +824,10 @@ Return {varintTagValue, varintBytesValue}.
 
   <section class="appendix">
     <h1>Term Codec Registry</h1>
-
+    <p>
+<b>**Note:</b> This term codec registry is deprecated and has been replaced by the CBOR-LD
+Varint Registry.
+    </p>
     <p>
 The following is a registry of well-known term codecs.
 These will be registered on a first-come first-serve basis.
