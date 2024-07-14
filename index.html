@@ -537,7 +537,7 @@ The following is the current CBOR-LD registry:
       <table class="simple">
         <thead>
           <tr>
-            <th>Entry Number</th>
+            <th>Registry Entry Id</th>
             <th>Use Case</th>
             <th>typeTables</th>
             <th>Processing Model</th>
@@ -597,14 +597,14 @@ The following is the current CBOR-LD registry:
 
       <p>
 This algorithm takes JSON-LD objects `jsonldDocument` and `options` as well 
-as an integer `registryValue` as input.
+as an integer `registryEntryId` as input.
       </p>
 
       <ol>
         <li>Let `result` be an empty CBOR-encoded byte array.</li>
         <li>
 Set {`varintTagValue`, `varintBytesValue`} to the return value of the "Get CBOR-LD Varint Structure
-Algorithm", passing `registryValue` as input.
+Algorithm", passing `registryEntryId` as input.
         </li>
         <li>
 If the "Get CBOR-LD Varint Structure Algorithm" resulted in an error, set `result` to the
@@ -614,13 +614,13 @@ return value of the "Generate Uncompressed CBOR-LD Algorithm".
 Otherwise:
           <ol>
             <li>
-Initialize `typeTables`
+Initialize `typeTables` to an empty map
             </li>
             <li>
 For each entry in the `typeTables` array in the <b>CBOR-LD Varint Registry Entry</b> 
-associated with `registryValue`, dereference the URL if necessary and add ${type}: ${table} from
+associated with `registryEntryId`, dereference the URL if necessary and add ${type}: ${table} from
 the resulting document to `typeTables`. If "callerProvidedTable"
-appears in `contextTables`, populate `contextUrls` with `options.callerProvidedTable` as well.
+appears in `contextTables`, populate `typeTables` with `options.callerProvidedTable` as well.
             </li>
             <li>
 Set `result` to the return value of the "Generate Compressed CBOR-LD
@@ -638,7 +638,7 @@ and `varintBytesValue` as `options.varintBytesValue`.
       <h2>Uncompressed CBOR-LD Buffer Algorithm</h2>
 
       <p>
-This algorithm takes a JSON-LD object `jsonldDocument`, integer `registryValue` and 
+This algorithm takes a JSON-LD object `jsonldDocument`, integer `registryEntryId` and 
 `options` as input.
       </p>
 
@@ -665,7 +665,7 @@ This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.
 The `options` MUST contain:
       </p>
       <dl>
-        <dt>`typeTables`</dt>
+        <dt>`typeTable`</dt>
         <dd>
 A map of JSON-LD types to maps. Each of these maps will map values of the associated
 type to their encoded CBOR-LD values.
@@ -786,13 +786,13 @@ error.
     </section>
     <section>
       <h3>Get CBOR-LD Varint Structure Algorithm</h3>
-This algorithm takes as input an integer `registryValue`.
+This algorithm takes as input an integer `registryEntryId`.
       <ol>
         <li>
-If `registryValue` is less than 128:
+If `registryEntryId` is less than 128:
           <ol>
             <li>
-Set `varintEncoded` to the byte encoding of `registryValue`.
+Set `varintEncoded` to the byte encoding of `registryEntryId`.
             </li>
             <li>
 Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
@@ -804,7 +804,7 @@ Set `varintTagValue` to the result of appending `varintEncoded` to the end of th
 Otherwise:
           <ol>
             <li>
-Set `varintArray` to an array containing the varint representation of `registryValue`.
+Set `varintArray` to an array containing the varint representation of `registryEntryId`.
             </li>
             <li>
 Set `varintTagValue` to `varintArray[0]` appended to the end of the bytes 0xD906.
