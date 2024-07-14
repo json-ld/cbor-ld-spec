@@ -472,8 +472,8 @@ CBOR tag values, we define the following.
       <p>
 Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
 as the beginning of a varint. If the CBOR tag is in the range (0x0600-0x067F), the last byte of
-the CBOR tag is a one-byte varint. If the CBOR tag is `0x0680`, the first item in the CBOR payload
-MUST be a major type 2 byte string containing the rest of the varint. See Algorithm <a
+the CBOR tag is a one-byte varint. If the CBOR tag is `0x0680` or greater, the first item in the
+CBOR payload MUST be a major type 2 byte string containing the rest of the varint. See Algorithm <a
 href="#get-cbor-ld-varint-structure-algorithm"></a> for
 more information.
       </p>
@@ -485,59 +485,114 @@ The value of this varint is then used to lookup a <b>CBOR-LD Varint Registry Ent
     <section>
       <h2>CBOR-LD Varint Registry</h2>
       <p>
-The <b>CBOR-LD Varint Registry</b> is a global list that provides
+The <b>CBOR-LD Registry</b> is a global list that provides
 consumers of CBOR-LD payloads the information they need to reconstruct the term codec map
 required for decompression. A <b>CBOR-LD Varint Registry Entry</b> contains the following:
         <ol>
           <li>
-varint Value: an integer no smaller than 1536.
+Registry Entry Value: a positive integer.
           </li>
           <li>
 Use Case: what type of CBOR-LD payload this entry is used for.
           </li>
           <li>
-`compressionTables`: an array containing what `Compression Tables` must be used for this
+`typeTables`: an array containing what `Type Tables` must be used for this
 type of payload.
+          </li>
+          <li>
+`processingModel`: what processing model is used for this registry entry. A processing model
+specifies how auto-generated CBOR-LD values are created from JSON-LD contexts as well as what
+type encoders are used alongside the `Type Tables` (e.g. how to partially compress an 
+`xsd:dateTime` value that does not appear in `Type Table`). The default processing model,
+which will be defined later in this specification, will be used unless otherwise specified
+in the Registry Entry.
           </li>
         </ol>
       </p>
       <p>
-The `contextTables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
-URLs. The only exception is the string "callerProvidedTable", which may appear in this array,
-denoting that for this use case, a `Compression Table` is required which is not globally
+The `typeTables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
+or JSON objects. The only exception is the string "callerProvidedTable", which may appear in this array,
+denoting that for this use case, a `Type Table` is required which is not globally
 defined.
       </p>
       <p></p>
 Dereferencing one of these URLs MUST result in a JSON object with the following properties:
       <ol>
         <li>
-`contextCompressionMap`: a JSON object that maps URLs to integers.
+`type`: a JSON-LD type.
         </li>
         <li>
-`contextDecompressionMap`: a JSON object that maps integers to URLs.
-        </li>
-        <li>
-`termCompressionMap`: a JSON object that maps JSON-LD terms to integers.
-        </li>
-        <li>
-`termDecompressionMap`: a JSON object that maps integers to JSON-LD terms.
+`table`: a JSON object that maps values of the above type to integers.
         </li>
       </ol>
-`contextCompressionMap` and `contextDecompressionMap` MUST be inverse maps 
-(i.e. `contextDecompressionMap` is identical to `contextCompressionMap`, but with keys an
-values swapped). Similarly. `termCompressionMap` and `termDecompressionMap` MUST be inverse
-maps.
-      </p>
       <p>
-If multiple `Compression Tables` exist in a single <b>CBOR-LD Varint Registry Entry</b>,
-these tables MUST NOT share any integers, URLs, or JSON-LD terms between them.
+If a JSON object is present in the `typeTables` array, it MUST be in the above format.
       </p>
+      <section>
+        <h3>Registry</h3>
+      </section>
+      <p>
+The following is the current CBOR-LD registry:
+      </p>
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>Entry Number</th>
+            <th>Use Case</th>
+            <th>typeTables</th>
+            <th>Processing Model</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          <td>0</td>
+          <td>Uncompressed CBORLD</td>
+          <td>None</td>
+          <td>DEFAULT</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Compressed CBORLD, default use case.</td>
+            <td>DEFAULT</td>
+            <td>DEFAULT</td>
+          </tr>
+          <tr>
+            <td>100</td>
+            <td><a href='https://w3c-ccg.github.io/vc-barcodes/'>Verifiable Credential Barcodes Specification Test Vectors</a></td>
+            <td>
+[
+  {
+    type: "context",
+    table:
+    {
+      "https://www.w3.org/ns/credentials/v2": 32768,
+      "https://w3id.org/vc-barcodes/v1": 32769,
+      "https://w3id.org/utopia/v2": 32770
+    }
+  },
+  {
+    type: "https://w3id.org/security#cryptosuiteString",
+    table: 
+    {
+      "ecdsa-rdfc-2019": 1,
+      "ecdsa-sd-2023": 2,
+      "eddsa-rdfc-2022": 3,
+      "ecdsa-xi-2023": 4
+    }
+  }
+]
+            </td>
+            <td>DEFAULT</td>
+          </tr>
+        </tbody>
+      </table>
+
     </section>
 
     <section class="informative">
       <h2>CBOR Varint Registry Example</h2>
       <p>
-As as example, take the following one-entry <b>CBOR-LD Varint Registry</b>:
+As as example, take th one-entry <b>CBOR-LD Varint Registry</b>:
       </p>
       <table class="simple">
         <thead>
