@@ -648,14 +648,14 @@ Dereferencing "https://example.cborld.com/table1" might then return:
 
       <p>
 This algorithm takes JSON-LD objects `jsonldDocument` and `options` as well 
-as an integer `varintValue` as input.
+as an integer `registryValue` as input.
       </p>
 
       <ol>
         <li>Let `result` be an empty CBOR-encoded byte array.</li>
         <li>
 Set {`varintTagValue`, `varintBytesValue`} to the return value of the "Get CBOR-LD Varint Structure
-Algorithm", passing `varintValue` as input.
+Algorithm", passing `registryValue` as input.
         </li>
         <li>
 If the "Get CBOR-LD Varint Structure Algorithm" resulted in an error, set `result` to the
@@ -665,22 +665,20 @@ return value of the "Generate Uncompressed CBOR-LD Algorithm".
 Otherwise:
           <ol>
             <li>
-Initialize `contextUrlMap` and `termMap` to empty maps.
+Initialize `typeTables`
             </li>
             <li>
-For each entry in the `contextTables` array in the <b>CBOR-LD Varint Registry Entry</b> 
-associated with `varintValue`, dereference the URL and add all entries in the
-`contextCompressionMap` map in the resulting document to `contextUrls`. If "callerProvidedTable"
+For each entry in the `typeTables` array in the <b>CBOR-LD Varint Registry Entry</b> 
+associated with `registryValue`, dereference the URL if necessary and add ${type}: ${table} from
+the resulting document to `typeTables`. If "callerProvidedTable"
 appears in `contextTables`, populate `contextUrls` with `options.callerProvidedTable` as well.
-Then, add all entries in `termCompressionMap` to `termMap`.
             </li>
             <li>
 Set `result` to the return value of the "Generate Compressed CBOR-LD
-Algorithm" passing `contextUrls` as `options.contextUrls`, `termMap` as `options.termMap`,
-`varintTagValue` as `options.varintTagValue`, and `varintBytesValue`
-as `options.varintBytesValue`.
+Algorithm" passing `typeTables` as `options.typeTable`, `varintTagValue` as `options.varintTagValue`,
+and `varintBytesValue` as `options.varintBytesValue`.
             </li>
-            
+
           </ol>
 
         <li>Return `result`.</li>
@@ -718,14 +716,10 @@ This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.
 The `options` MUST contain:
       </p>
       <dl>
-        <dt>`contextUrls`</dt>
+        <dt>`typeTables`</dt>
         <dd>
-A map of JSON-LD context URL strings that are mapped to
-their encoded CBOR-LD values.
-        </dd>
-        <dt>`termMap`</dt>
-        <dd>
-A map of JSON-LD terms and their associated CBOR-LD term codecs.
+A map of JSON-LD types to maps. Each of these maps will map values of the associated
+type to their encoded CBOR-LD values.
         </dd>
         <dt>`varintTagValue`</dt>
         <dd>
@@ -778,7 +772,7 @@ function.
       <h2>Get Term Codec Map Algorithm</h2>
 
       <p>
-This algorithm takes two maps `contextUrls` and `termMap` and returns a CBOR-LD
+This algorithm takes a map `typeTable` and returns a CBOR-LD
 term codec map that maps JSON-LD terms to their associated byte values
 and value compression functions.
       </p>
@@ -796,10 +790,11 @@ every entry.
 The first entry should be set to `value` with an undefined value.
                 </li>
                 <li>
-Let `compressor` be a known global compressor function associated with the
-`@type` property, a compressor for this entry provided in `termMap`,
-function, or the generic CBOR compressor function, which returns the bytes
-associated with a typical CBOR compression of the given datatype.
+Let `compressor` be a known compressor function associated with the
+`@type` property from `typeTable`, a type-specific generic compressor
+associated with the processing model in use, or the generic CBOR compressor 
+function, which returns the bytes associated with a typical CBOR compression
+of the given datatype.
                 </li>
               </ol>
             </li>
@@ -842,34 +837,36 @@ error.
     </section>
     <section>
       <h3>Get CBOR-LD Varint Structure Algorithm</h3>
-  This algorithm takes as input an integer `varintValue`.
+This algorithm takes as input an integer `registryValue`.
       <ol>
         <li>
-  If `varintValue` is less than 128:
+If `registryValue` is less than 128:
           <ol>
             <li>
-              Set `varintEncoded` to the byte encoding of `varintValue.
+Set `varintEncoded` to the byte encoding of `registryValue`.
             </li>
             <li>
-    Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
-    0xD906, and set `varintBytesValue` to `null`.
+Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
+0xD906, and set `varintBytesValue` to `null`.
             </li>
           </ol>
         </li>
         <li>
-  Otherwise:
+Otherwise:
           <ol>
             <li>
-  Set `varintTagValue` to 0xD90680.
+Set `varintArray` to an array containing the varint representation of `registryValue`.
             </li>
             <li>
-  Set `varintBytesValue` to a CBOR major type 2 bytes object containing a varint representation
-  of `varintValue`.
+Set `varintTagValue` to `varintArray[0]` appended to the end of the bytes 0xD906.
+            </li>
+            <li>
+Set `varintBytesValue` to a CBOR array containing the rest of `varintArray`.
             </li>
           </ol>
         </li>
         <li>
-  Return {varintTagValue, varintBytesValue}.
+Return {varintTagValue, varintBytesValue}.
         </li>
       </ol>
     </section>
