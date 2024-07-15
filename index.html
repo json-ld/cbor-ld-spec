@@ -471,7 +471,7 @@ CBOR tag values, we define the following.
       </p>
       <p>
 Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
-as the beginning of a varint. If the CBOR tag is in the range (0x0600-0x067F), the last byte of
+as the beginning of a varint. If the CBOR tag is in the range `0x0600`–`0x067F`, the last byte of
 the CBOR tag is a one-byte varint. If the CBOR tag is `0x0680` or greater, the first item in the
 CBOR payload MUST be a major type 2 byte string containing the rest of the varint. See Algorithm <a
 href="#get-cbor-ld-varint-structure-algorithm"></a> for
