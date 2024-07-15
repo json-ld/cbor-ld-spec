@@ -447,18 +447,18 @@ The first step in decoding a CBOR-LD payload is to recreate the term codec
 map that was used to encode it by processing the contexts in the payload. However,
 the contexts needed to create the term codec map can have their URLs encoded as integers
 by CBOR-LD. If a CBOR-LD payload contains context URLs compressed in such a way, the
-consumer of the CBOR-LD must know what compression tables (maps from JSON-LD terms to integers)
-was used to compress the context URLs during creation to be able to reconstruct the term codec
+consumer of the CBOR-LD needs to know what compression tables (maps from JSON-LD terms to integers)
+were used to compress the context URLs during creation to be able to reconstruct the term codec
 map. The following sections define the exact mechanism by which this can be accomplished, allowing 
-an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload meeting this specification.
+an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload that conforms to this specification.
     </p>
     <p>
 To this end, we have registered the range of CBOR tags 1536-1791** (0x0600-0x06FF) to be used for CBOR-LD,
 where data that includes tag value is used to lookup what compression table(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
-    <p>
-<b>**Note:</b> this exact range of tag values has not yet been officially registered with
+    <p class="issue">
+This exact range of tag values has not yet been officially registered with
 <a href="https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml">the IANA CBOR
 Tag Registry</a>. The exact range is subject to change.
     </p>
@@ -496,7 +496,7 @@ Registry Entry Value: a positive integer.
 Use Case: what type of CBOR-LD payload this entry is used for.
           </li>
           <li>
-`typeTables`: an array containing what `Type Tables` must be used for this
+`typeTables`: an array containing what `Type Tables` are to be used for this
 type of payload.
           </li>
           <li>
