@@ -675,9 +675,8 @@ The following is the current CBOR-LD registry:
   <section class="normative">
     <h1>Algorithms</h1>
 In this section we specify the algorithms required to convert JSON-LD to CBOR-LD
-and vice versa. We first provide the <a
-href="#get-term-codec-map-algorithm"></a>, which is used in both compression and
-decompression, then provide the algorithms specific to each mode.
+and vice versa. We first provide the context processing algorithms, which are required
+for both decompression and compression, then
     <section>
       <h2>Get Term Codec Map Algorithm</h2>
 
@@ -925,39 +924,33 @@ Return {varintTagValue, varintBytesValue}.
         <h2>CBOR-LD to JSON-LD Algorithm</h2>
   
         <p>
-This algorithm takes a CBOR-LD object `cborldBytes` and `options` as well 
-as an integer `registryEntryId` as input.
+This algorithm takes a CBOR-LD object `cborldBytes` and JSON object `options` as input.
         </p>
   
         <ol>
           <li>
-Let `varintValue` to the result of passing `cborldBytes` to the 
+Set `registryEntryId` to the result of passing `cborldBytes` to the 
 <a
 href="#get-cbor-ld-registry-entry-id-algorithm"></a>.
-          <li>
-Set {`varintTagValue`, `varintBytesValue`} to the return value of the "Get CBOR-LD Varint Structure
-Algorithm", passing `registryEntryId` as input.
           </li>
           <li>
-If the "Get CBOR-LD Varint Structure Algorithm" resulted in an error, set `result` to the
-return value of the "Generate Uncompressed CBOR-LD Algorithm".
+Set `typeTable` to an empty map.
+          </li>
+          <li>
+For each entry in the typeTables array in the CBOR-LD Varint Registry Entry associated with
+`registryEntryId`, dereference the URL if necessary and add ${type}: ${table} from the resulting
+document to `typeTable`. If "callerProvidedTable" appears in contextTables, populate `typeTables`
+with `options.callerProvidedTable` as well.
           </li>
           <li>
 Otherwise:
             <ol>
               <li>
-Initialize `typeTables` to an empty map
+Initialize `typeTables` to an empty map.
               </li>
               <li>
-For each entry in the `typeTables` array in the <b>CBOR-LD Varint Registry Entry</b> 
-associated with `registryEntryId`, dereference the URL if necessary and add ${type}: ${table} from
-the resulting document to `typeTables`. If "callerProvidedTable"
-appears in `contextTables`, populate `typeTables` with `options.callerProvidedTable` as well.
-              </li>
-              <li>
-Set `result` to the return value of the "Generate Compressed CBOR-LD
-Algorithm" passing `typeTables` as `options.typeTable`, `varintTagValue` as `options.varintTagValue`,
-and `varintBytesValue` as `options.varintBytesValue`.
+Set `result` to the return value of the <a
+href="#generate-decompressed-json-ld-algorithm"></a>, passing `cborldBytes and `typeTable`.
               </li>
   
             </ol>
@@ -999,6 +992,25 @@ byte of the CBOR tag.
           </li>
           <li>
 Return `registryEntryId`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h2>
+Generate Decompressed JSON-LD Algorithm
+        </h2>
+        <p>
+This algorithm takes as input CBOR-LD payload `cborldBytes` and a map `typeTable` and returns a JSON-LD document.
+        </p>
+        <ol>
+          <li>
+Initialize `termCodecMap` to the result of the <a href="#get-term-codec-map-algorithm"></a>, passing `typeTable` as input.
+          </li>
+          <li>
+Let `result` be an empty JSON-LD document.
+          </li>
+          <li>
+For every entry `term`:`value` in `cborldBytes`
           </li>
         </ol>
       </section>
