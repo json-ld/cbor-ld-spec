@@ -671,7 +671,6 @@ The following is the current CBOR-LD registry:
 
     </section>
   </section>
-
   <section class="normative">
     <h1>Algorithms</h1>
 In this section we specify the algorithms required to convert JSON-LD to CBOR-LD
@@ -684,47 +683,38 @@ The following algorithms specify how to process JSON-LD contexts to create the T
 that is needed to compress or decompress to/from CBOR-LD. During compression and decompression, the 
 <a href="top-level-term-codec-map-generation-algorithm"></a> is run once during setup, and the 
 <a href="update-term-codec-map-with-type-scoped-context-algorithm"></a> and 
-<a href="update-term-codec-map-with-type-scoped-context-algorithm"></a> are run on an as-needed basis.
+<a href="update-term-codec-map-with-property-scoped-context-algorithm"></a> are run on an as-needed basis.
       </p>
       <section>
         <h2>Top-level Term Codec Map Generation Algorithm</h2>
         <p>
-This algorithm takes a map `typeTable` and returns a CBOR-LD
-term codec map that maps JSON-LD terms to their associated byte values
+This algorithm takes a map `typeTable` and an array of JSON-LD contexts `contexts` and 
+returns a CBOR-LD term codec map that maps JSON-LD terms to their associated byte values
 and value compression functions.
         </p>
-
         <ol>
-          <li>Let `result` be an ordered map.</li>
+          <li>Let `termToEncodedValue` be an ordered map.</li>
           <li>
 For each value in `contextUrls`, dereference the JSON-LD contexts and process
-every entry.
+every entry at the top level (i.e. ignoring type and property-scoped contexts).
             <ol>
-              <li>Set the entry key to the JSON-LD term key.</li>
-              <li>Set the entry value to an unordered map with two entries.
-                <ol>
-                  <li>
-The first entry should be set to `value` with an undefined value.
-                  </li>
-                  <li>
-Let `compressor` be a known compressor function associated with the
-`@type` property from `typeTable`, a type-specific generic compressor
-associated with the processing model in use, or the generic CBOR compressor 
-function, which returns the bytes associated with a typical CBOR compression
-of the given datatype.
-                  </li>
-                </ol>
+              <li>
+Set the entry key in `termToEncodedValue` to the JSON-LD term.
+              </li>
+              <li>
               </li>
             </ol>
           </li>
           <li>
-Let `sortedTerms` be the value of sorting all of the keys in `result`.
+Sort the keys in `termToEncodedValue` by value.
           </li>
           <li>
-For every value in the list of `sortedTerms` set the associated
-`termHint.value` value to the associated index of `sortedTerms`.
+Set `nextTermId` to 100.
           </li>
-          <li>Return `result`.</li>
+          <li>
+For every key in `termToEncodedValue`, set its value to `nextTermId` and increment `nextTermId` by 2.
+          </li>
+          <li>Return `termToEncodedValue`.</li>
         </ol>
       </section>
       <section>
@@ -870,7 +860,6 @@ function.
       </section>
       <section>
         <h3>Get Context URLs Algorithm</h3>
-  
         <ol>
           <li>
 Let `result` be a ordered map.
@@ -1020,16 +1009,52 @@ This algorithm takes as input CBOR-LD payload `cborldBytes` and a map `typeTable
         </p>
         <ol>
           <li>
-Initialize `termCodecMap` to the result of the <a href="#get-term-codec-map-algorithm"></a>, passing `typeTable` as input.
+Initialize `termToEncodedValue` to the result of the 
+<a href="#top-level-term-codec-map-generation-algorithm"></a>, passing `typeTable` as input.
           </li>
           <li>
 Let `result` be an empty JSON-LD document.
           </li>
           <li>
-For every entry `term`:`value` in `cborldBytes`
+For every entry `term`:`values` in `cborldBytes`:
+            <ol>
+              <li>
+If the key associated with the value of `term` in `termToEncodedValue` has associated type information, apply the
+<a href="#update-term-codec-map-with-type-scoped-context-algorithm"></a> to add relevant type-scoped contexts to
+`termToEncodedValue`.
+              </li>
+              <li>
+Apply the <a href="#update-term-codec-map-with-property-scoped-context-algorithm"></a> to update `termToEncodedValue` with
+any property-scoped contexts.
+              </li>
+              <li>
+For every `value` in `values`:
+                <ol>
+                  <li>
+If `value` is null, add it to `result`.
+                  </li>
+                  <li>
+If `value` is an array, create an output array, recursively process each element, and add the output array to `result`.
+                  </li>
+                  <li>
+If `value` is an object, recurse starting at step 3 and populate `result` with the return value.
+                  </li>
+                  <li>
+Otherwise, convert the value by checking value type and using value-specific codecs, and add the output
+to `result`.
+                  </li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li>
+Return `result`.
           </li>
         </ol>
       </section>
+    </section>
+    <section>
+      <h2>Type and Value Codecs</h2>
     </section>
    
   </section>
