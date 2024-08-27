@@ -800,8 +800,7 @@ Return the Uncompressed CBOR-LD Buffer.
         </ol>
       </section>
       <section>
-        <h2>Compressed CBOR-LD Buffer Algorithm</h2>
-  
+        <h2>Generate Compressed CBOR-LD Algorithm</h2>
         <p>
 This algorithm takes a JSON-LD object `jsonldDocument` and `options` as input.
 The `options` MUST contain:
@@ -835,27 +834,44 @@ If `options.varintBytesValue` is not `null`, set the next bytes of
 `result` to `options.varintBytesValue`.
           </li>
           <li>
-Initialize `termCodecMap` to the result of the <a
-href="#get-term-codec-map-algorithm"></a>, passing `options.typeTable`
-  as input.
+Initialize `termToEncodedValue` to the result of the 
+<a href="#top-level-term-codec-map-generation-algorithm"></a>, passing `typeTable` as input.
           </li>
           <li>
-Add to `result` by recursively processing every name-value pair in
-`jsonldDocument`
+For every entry `term`:`values` in `jsonldDocument`:
             <ol>
               <li>
-Let `termHint` be the value associated with the JSON name in the
-`termCodecMap`.
+If `term` has associated type information, apply the
+<a href="#update-term-codec-map-with-type-scoped-context-algorithm"></a> to add relevant type-scoped contexts to
+`termToEncodedValue`.
               </li>
               <li>
-Set the CBOR key to the `termHint.value` value.</li>
+Apply the <a href="#update-term-codec-map-with-property-scoped-context-algorithm"></a> to update `termToEncodedValue` with
+any property-scoped contexts.
+              </li>
               <li>
-Set the CBOR value to the result of the `termHint.valueCompressor`
-function.
+For every `value` in `values`:
+                <ol>
+                  <li>
+If `value` is null, add it to `result`.
+                  </li>
+                  <li>
+If `value` is an array, create an output array, recursively process each element, and add the output array to `result`.
+                  </li>
+                  <li>
+If `value` is an object, recurse starting at step 3 and populate `result` with the return value.
+                  </li>
+                  <li>
+Otherwise, convert the value by checking value type and using value-specific codecs as well as `termToEncodedValue, and
+add the output to `result`.
+                  </li>
+                </ol>
               </li>
             </ol>
           </li>
-          <li>Return `result`.</li>
+          <li>
+Return `result`.
+          </li>
         </ol>
       </section>
       <section>
@@ -1040,8 +1056,8 @@ If `value` is an array, create an output array, recursively process each element
 If `value` is an object, recurse starting at step 3 and populate `result` with the return value.
                   </li>
                   <li>
-Otherwise, convert the value by checking value type and using value-specific codecs, and add the output
-to `result`.
+Otherwise, convert the value by checking value type and using value-specific codecs as well as `termToEncodedValue`
+and add the output to `result`.
                   </li>
                 </ol>
               </li>
