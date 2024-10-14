@@ -995,6 +995,36 @@ Return `activeContext`.
         </section>
         <section>
           <h3>Apply Embedded Contexts Algorithm</h3>
+            <p>
+This algorithm takes maps `state`, `activeContext` and `input` as input and
+returns a map `result` containing maps `state` and `activeContext`.
+            </p>
+            <ol>
+              <li>
+Set `newActiveContext` to be a new map.
+              </li>
+              <li>
+Set `newActiveContext.previousActiveContext` to `activeContext`.
+              </li>
+              <li>
+Set `termMapUpdateResult` to the result of passing `state`, `activeContext.termMap` as
+`activeTermMap`, and the value of '@context' in `input` as `contexts` to 
+<a href="#update-term-map-algorithm"></a>.
+              </li>
+              <li>
+Set `state` to `termMapUpdateResult.state`.
+              </li>
+              <li>
+Set `newActiveContext.termMap` to `termMapUpdateResult.activeTermMap`.
+              </li>
+              <li>
+Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
+`result.state` to `state`.
+              </li>
+              <li>
+Return `result`. 
+              </li>
+            </ol>
         </section>
         <section>
           <h3>Apply Property Scoped Contexts Algorithm</h3>
