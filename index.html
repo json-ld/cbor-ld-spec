@@ -713,7 +713,25 @@ Set `state` to the result of passing `state` to
 This algorithm takes and returns a map `state`.
         </p>
         <ol>
-          <li>test</li>
+          <li>
+If `state.strategy` is set to `compression`, set `state` to the result of
+<a href="#initialize-compression-algorithm"></a>.
+          </li>
+          <li>
+Else if `state.strategy` is set to `decompression`, set `state` to the result of
+<a href="#initialize-decompression-algorithm"></a>.
+          </li>
+          <li>
+Set `state` to the result of passing `state` to
+<a href="#initialize-context-loader-algorithm"></a>.
+          </li>
+          <li>
+Set `state` to the result of passing `state` to
+<a href="#initialize-active-context-algorithm"></a>.            
+          </li>
+          <li>
+Return `state`.
+          </li>
         </ol>
       </section>
       <section>
@@ -730,6 +748,12 @@ This algorithm takes and returns a map `state`.
       </section>
       <section>
         <h3>Decompressor</h3>
+        <section>
+          <h4>Initialize Decompression Algorithm</h4>
+          <p>
+This algorithm takes and returns a map `state`.
+          </p>
+        </section>
       </section>
     </section>
 
@@ -763,6 +787,60 @@ TODO: description
       </p>
       <section>
         <h3>Initialize Context Loader Algorithm</h3>
+        <p>
+This algorithm takes and returns a map `state`.
+        </p>
+        <ol>
+          <li>
+Set `state.contextMap` to a new map.
+          </li>
+          <li>
+Set `state.nextTermId` to 100.
+          </li>
+          <li>
+Set `state.termToId` to the following map of JSON-LD keywords to their associated
+integer values:
+            <pre class="nohighlight">
+{
+  '@context' => 0,
+  '@type' => 2,
+  '@id' => 4,
+  '@value' => 6,
+  '@direction' => 8,
+  '@graph' => 10,
+  '@included' => 12,
+  '@index' => 14,
+  '@json' => 16,
+  '@language' => 18,
+  '@list' => 20,
+  '@nest' => 22,
+  '@reverse' => 24,
+  '@base' => 26,
+  '@container' => 28,
+  '@default' => 30,
+  '@embed' => 32,
+  '@explicit' => 34,
+  '@none' => 36,
+  '@omitDefault' => 38,
+  '@prefix' => 40,
+  '@preserve' => 42,
+  '@protected' => 44,
+  '@requireAll' => 46,
+  '@set' => 48,
+  '@version' => 50,
+  '@vocab' => 52,
+  '@propagate' => 54
+}
+            </pre>
+          </li>
+          <li>
+If `state.strategy` is set to `decompression`, set `state.idToTerm` to the reverse map
+of `state.termToId` (i.e., a map from integers to JSON-LD keywords).
+          </li>
+          <li>
+Return `state`.
+          </li>
+        </ol>
       </section>
       <section>
         <h3>Add Context Algorithm</h3>
