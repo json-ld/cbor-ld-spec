@@ -1001,12 +1001,6 @@ returns a map `result` containing maps `state` and `activeContext`.
             </p>
             <ol>
               <li>
-Set `newActiveContext` to be a new map.
-              </li>
-              <li>
-Set `newActiveContext.previousActiveContext` to `activeContext`.
-              </li>
-              <li>
 Set `termMapUpdateResult` to the result of passing `state`, `activeContext.termMap` as
 `activeTermMap`, and the value of '@context' in `input` as `contexts` to 
 <a href="#update-term-map-algorithm"></a>.
@@ -1015,7 +1009,11 @@ Set `termMapUpdateResult` to the result of passing `state`, `activeContext.termM
 Set `state` to `termMapUpdateResult.state`.
               </li>
               <li>
-Set `newActiveContext.termMap` to `termMapUpdateResult.activeTermMap`.
+Set `termMap` to `termMapUpdateResult.activeTermMap`.
+              </li>
+              <li>
+Set `newActiveContext` to the result of <a href="#initialize-active-context-algorithm"></a>,
+passing `termMap` and `activeContext` as `previousActiveContext`.
               </li>
               <li>
 Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
@@ -1031,6 +1029,47 @@ Return `result`.
         </section>
         <section>
           <h3>Apply Type Scoped Contexts Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `activeContext` and a set `objectTypes` as input and
+returns a map `result` containing maps `state` and `activeContext`.
+          </p>
+          <ol>
+            <li>
+Set `objectTypesSorted` to an empty array.
+            </li>
+            <li>
+Lexicographically sort the elements of `objectTypes` and add the elements to
+`objectTypesSorted` in order.
+            </li>
+            <li>
+Set `newTermMap` to `activeContext.termMap`.
+            </li>
+            <li>
+For `type` in `objectTypesSorted`:
+              <ol>
+                <li>
+Set `termMapUpdateResult` to the result of passing `state`, `newTermMap` as
+`activeTermMap`, the value of "@context" in `newTermMap`, if it exists, as
+`contexts`, and `true` as `typeScope` to <a href="#update-term-map-algorithm"></a>.
+                </li>
+                <li>
+Set `state` to `termMapUpdateResult.state` and `newTermMap` to
+`termMapUpdateResult.activeTermMap`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `newActiveContext` to the result of <a href="#initialize-active-context-algorithm"></a>,
+passing `newTermMap` as `termMap` and `activeContext` as `previousActiveContext`.
+            </li>
+            <li>
+Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
+`result.state` to `state`.
+              </li>
+              <li>
+Return `result`. 
+              </li>
+          </ol>
         </section>
         <section>
           <h3>Update Term Map Algorithm</h3>
