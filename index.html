@@ -726,7 +726,7 @@ Set `state` to the result of passing `state` to
 <a href="#initialize-context-loader-algorithm"></a>.
           </li>
           <li>
-Set `state` to the result of passing `state` to
+Set `state` to the result of passing `state` and an empty map `termMap` to
 <a href="#initialize-active-context-algorithm"></a>.            
           </li>
           <li>
@@ -764,6 +764,33 @@ TODO: description
         </p>
         <section>
           <h3>Initialize Active Context Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `previousActiveContext` and `termMap`
+and returns a map `state`. It updates the active context in use and finds
+all aliases for `'@type'`.
+          </p>
+          <ol>
+            <li>
+Set `state.previousActiveContext` to `previousActiveContext`.
+            </li>
+            <li>
+Set `state.activeContext.termMap` to `termMap`.
+            </li>
+            <li>
+Set `this.activeContext.typeTerms` to the array `['@type']`.
+            </li>
+            <li>
+For `[term, def]` in `termMap`:
+              <ol>
+                <li>
+If `def['@id'] == '@type'`, add `term` to `this.activeContext.typeTerms`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `state`.
+            </li>
+          </ol>
         </section>
         <section>
           <h3>Apply Embedded Contexts Algorithm</h3>
@@ -776,6 +803,9 @@ TODO: description
         </section>
         <section>
           <h3>Update Term Map Algorithm</h3>
+        </section>
+        <section>
+          <h3>Revert Term Map Algorithm</h3>
         </section>
 
     </section>    
