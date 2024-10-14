@@ -742,7 +742,7 @@ Return `state`.
         <h3>Convert Document Algorithm</h3>
         <p>
 This algorithm takes a map `state` and a map or array of
-maps `inputDocuments` and returns a map `outputMaps`.
+maps `inputDocuments` and returns a map or array of maps `outputMaps`.
         </p>
         <ol>
           <li>
@@ -759,13 +759,107 @@ For `input` in `inputs`:
 Set `output` to an empty map.
               </li>
               <li>
-If `state.strategy` is set to `compression`, set `state` to the result of 
+Set `result` to the result of passing `state`, `input`, `output`, and
+`state.initialActiveContext` as `activeContext` to
+<a href="#general-conversion-algorithm"></a>.
+              </li>
+              <li>
+Add `result` to `outputMaps`.
+              </li>
+            </ol>
+          </li>
+          <li>
+If `inputDocuments` is an array, return `outputMaps`. Otherwise, return the
+first element of `outputMaps`.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>General Conversion Algorithm</h3>
+        <p>
+This algorithm takes maps `input`, `output`, `state`, and `activeContext`
+as input and returns a map containing maps `state` and `output`.
+        </p>
+        <ol>
+          <li>
+If `state.strategy` is set to `compression`, set `activeContext` to 
+`result.activeContext` and `state` to `result.state` of `result` resulting from  
 <a href="#convert-contexts-for-compression-algorithm"></a>, passing `state`,
-`input`, and `output`.
+`activeContext`, `input`, and `output`. 
+          </li>
+          <li>
+Otherwise, set `activeContext` to
+`result.activeContext` and `state` to `result.state` of `result` resulting from 
+<a href="#convert-contexts-for-decompression-algorithm"></a>, passing `state`,
+`activeContext`, `input`, and `output`.
+          </li>
+          <li>
+If `state.strategy` is set to `compression`, set `state` to `result.state` and
+`objectTypes` to `result.objectTypes` for `result` resulting from
+<a href="#get-object-types-for-compression-algorithm"></a>, passing `state`,
+`activeContext`, `input`, and `output`.
+          </li>
+          <li>
+Otherwise, set `state` to `result.state` and `objectTypes` to `result.objectTypes`
+for `result` resulting from <a href="#get-object-types-for-decompression-algorithm"></a>,
+passing `state`, `activeContext`, `input`, and `output`.
+          </li>
+          <li>
+Set `activeContext` to the result of passing `activeContext` and `objectTypes` to
+<a href="#apply-type-scoped-contexts-algorithm"></a>.
+          </li>
+          <li>
+If `state.strategy` is set to `compression`, set `state` to `result.state` and
+`termEntries` to `result.termEntries` for `result` resulting from
+<a href="#get-input-entries-for-compression-algorithm"></a>, passing `state`,
+`input`, and `activeContext`.
+          </li>
+          <li>
+Otherwise, set `state` to `result.state` and `termEntries` to `result.termEntries`
+for `result` resulting from <a href="#get-input-entries-for-decompression-algorithm"></a>,
+passing `state`, `input`, and `activeContext`.
+          </li>
+          <li>
+For `[termInfo, value]` in `termEntries`:
+            <ol>
+              <li>
+Set `term` to `termInfo.term`.
+              </li>
+              <li>
+Set `valueActiveContext` to the result of passing `activeContext` and `term` to
+<a href="#apply-property-scoped-contexts-algorithm"></a>.
+              </li>
+              <li>
+Set `plural` to `termInfo.plural` and `termType` to the value of `@type` in `termInfo.def`.
+              </li>
+              <li>
+If `plural` is set to `true`, set `values` to `value`. Otherwise, set `values` to `[value]`.
+              </li>
+              <li>
+Set `outputs` to an empty array.
+              </li>
+              <li>
+For `unconvertedValue` in `values`:
+                <ol>
+                  <li>
+Set `result` to the result of <a href="#convert-value-algorithm"></a>,
+passing `state`, `termType`, `unconvertedValue` as `value`, and `valueActiveContext`
+as `activeContext`.
+                  </li>
+                  <li>
+Set `state` to `result.state` and add `result.output` to `outputs`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+
               </li>
             </ol>
           </li>
         </ol>
+      </section>
+      <section>
+        <h3>Convert Value Algorithm</h3>
       </section>
       <section>
         <h3>Compressor</h3>
@@ -782,7 +876,7 @@ This algorithm takes maps `state`, `input`, and `output`, and returns a map `out
           </p>
           <ol>
             <li>
-              
+
             </li>
           </ol>
         </section>
