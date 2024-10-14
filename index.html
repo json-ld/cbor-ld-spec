@@ -677,6 +677,69 @@ In this section we specify the algorithms required to convert JSON-LD to CBOR-LD
 and vice versa. We first provide the context processing algorithms, which are required
 for both decompression and compression, then provide the mode-specific algorithms.
     <section>
+      <h2>Encoding and Decoding</h2>
+      <section>
+        <h3>JSON-LD to CBOR-LD Compression Algorithm</h3>
+        <ol>
+          <li>
+Set `state` to an empty map.
+          </li>
+          <li>
+Set `state.strategy` to `compression`.
+          </li>
+          <li>
+Set `state` to the result of passing `state` to
+<a href="initalize-conversion-algorithm"></a>.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h3>CBOR-LD to JSON-LD Decompression Algorithm</h3>
+      </section>
+    </section>
+
+    <section>
+      <h2>Converter</h2>
+      <section>
+        <h3>Initialize Conversion Algorithm</h3>
+        <p>
+This algorithm takes a map `state` 
+        </p>
+      </section>
+      <section>
+        <h3>Convert Document Algorithm</h3>
+      </section>
+      <section>
+        <h3>Compressor</h3>
+        <section>
+          <h4>Initialize Compression Algorithm</h4>
+          <p>
+This algorithm takes a map `state` 
+          </p>
+        </section>
+      </section>
+      <section>
+        <h3>Decompressor</h3>
+      </section>
+    </section>
+
+    <section>
+      <h2>Active Context</h2>
+
+    </section>    
+
+    <section>
+      <h2>Context Loader</h2>
+
+    </section>
+
+    <section>
+      <h2>Codecs</h2>
+    </section>
+
+
+    <section>
+      <h2>-----OLD-------</h2>
       <h2>Context Processing</h2>
       <p>
 The following algorithms specify how to process JSON-LD contexts to create the Term Codec Map
