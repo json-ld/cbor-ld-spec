@@ -1026,6 +1026,42 @@ Return `result`.
         </section>
         <section>
           <h3>Apply Property Scoped Contexts Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `activeContext` and a string `term` as input and
+returns a map `result` containing maps `state` and `activeContext`.
+          </p>
+          <ol>
+            <li>
+Set `revertedTermMap` to the result of <a href="#revert-term-map-algorithm"></a>,
+passing `activeContext`.
+            </li>
+            <li>
+Set `termDef` to the value of `term` in `activeContext.termMap`. Set `contexts` to the value of
+"@context" in `termDef`.
+            </li>
+            <li>
+Set `termMapUpdateResult` to the result of passing `state`, `revertedTermMap` as
+`activeTermMap`, `true` as `propertyScope`, and `contexts` to 
+<a href="#update-term-map-algorithm"></a>.
+            </li>
+            <li>
+Set `state` to `termMapUpdateResult.state`.
+            </li>
+            <li>
+Set `termMap` to `termMapUpdateResult.activeTermMap`.
+            </li>
+            <li>
+Set `newActiveContext` to the result of <a href="#initialize-active-context-algorithm"></a>,
+passing `termMap` and `activeContext` as `previousActiveContext`.
+            </li>
+            <li>
+Set `result` to be a new map, and set `result.activeContext` to `newActiveContext` and
+`result.state` to `state`.
+            </li>
+            <li>
+Return `result`. 
+            </li>
+          </ol>
         </section>
         <section>
           <h3>Apply Type Scoped Contexts Algorithm</h3>
@@ -1048,9 +1084,13 @@ Set `newTermMap` to `activeContext.termMap`.
 For `type` in `objectTypesSorted`:
               <ol>
                 <li>
+Set `typeDef` to the value of `type` in `newTermMap`. Set `contexts` to the value of
+"@context" in `typeDef`.
+                </li>
+                <li>
 Set `termMapUpdateResult` to the result of passing `state`, `newTermMap` as
-`activeTermMap`, the value of "@context" in `newTermMap`, if it exists, as
-`contexts`, and `true` as `typeScope` to <a href="#update-term-map-algorithm"></a>.
+`activeTermMap`, `contexts`, and `true` as `typeScope` to
+<a href="#update-term-map-algorithm"></a>.
                 </li>
                 <li>
 Set `state` to `termMapUpdateResult.state` and `newTermMap` to
