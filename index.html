@@ -680,7 +680,14 @@ for both decompression and compression, then provide the mode-specific algorithm
       <h2>Encoding and Decoding</h2>
       <section>
         <h3>JSON-LD to CBOR-LD Compression Algorithm</h3>
+        <p>
+This algorithm takes a map `typeTable`, an integer `registryEntryId`, and a JSON-LD
+document `jsonldDocument` as input and returns bytes `cborldDocument` as output.
+        </p>
         <ol>
+          <li>
+TODO: tag processing
+          </li>
           <li>
 Set `state` to an empty map.
           </li>
@@ -689,7 +696,7 @@ Set `state.strategy` to `compression`.
           </li>
           <li>
 Set `state` to the result of passing `state` to
-<a href="initalize-conversion-algorithm"></a>.
+<a href="#initialize-conversion-algorithm"></a>.
           </li>
         </ol>
       </section>
@@ -703,8 +710,11 @@ Set `state` to the result of passing `state` to
       <section>
         <h3>Initialize Conversion Algorithm</h3>
         <p>
-This algorithm takes a map `state` 
+This algorithm takes and returns a map `state`.
         </p>
+        <ol>
+          <li>test</li>
+        </ol>
       </section>
       <section>
         <h3>Convert Document Algorithm</h3>
@@ -714,7 +724,7 @@ This algorithm takes a map `state`
         <section>
           <h4>Initialize Compression Algorithm</h4>
           <p>
-This algorithm takes a map `state` 
+This algorithm takes and returns a map `state`.
           </p>
         </section>
       </section>
@@ -725,16 +735,46 @@ This algorithm takes a map `state`
 
     <section>
       <h2>Active Context</h2>
+        <p>
+TODO: description
+        </p>
+        <section>
+          <h3>Initialize Active Context Algorithm</h3>
+        </section>
+        <section>
+          <h3>Apply Embedded Contexts Algorithm</h3>
+        </section>
+        <section>
+          <h3>Apply Property Scoped Contexts Algorithm</h3>
+        </section>
+        <section>
+          <h3>Apply Type Scoped Contexts Algorithm</h3>
+        </section>
+        <section>
+          <h3>Update Term Map Algorithm</h3>
+        </section>
 
     </section>    
 
     <section>
       <h2>Context Loader</h2>
-
+      <p>
+TODO: description
+      </p>
+      <section>
+        <h3>Initialize Context Loader Algorithm</h3>
+      </section>
+      <section>
+        <h3>Add Context Algorithm</h3>
+      </section>
     </section>
 
     <section>
       <h2>Codecs</h2>
+    </section>
+
+    <section>
+      <h2>CBOR Tag Processing</h2>
     </section>
 
 
