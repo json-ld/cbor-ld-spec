@@ -693,7 +693,7 @@ TODO: tag processing
 Set `state` to an empty map.
           </li>
           <li>
-Set `state.strategy` to `compression`.
+Set `state.strategy` to "compression".
           </li>
           <li>
 Set `state` to the result of passing `state` to
@@ -718,11 +718,11 @@ This algorithm takes and returns a map `state`.
         </p>
         <ol>
           <li>
-If `state.strategy` is set to `compression`, set `state` to the result of
+If `state.strategy` is set to "compression", set `state` to the result of
 <a href="#initialize-compression-algorithm"></a>.
           </li>
           <li>
-Else if `state.strategy` is set to `decompression`, set `state` to the result of
+Else if `state.strategy` is set to "decompression", set `state` to the result of
 <a href="#initialize-decompression-algorithm"></a>.
           </li>
           <li>
@@ -742,7 +742,8 @@ Return `state`.
         <h3>Convert Document Algorithm</h3>
         <p>
 This algorithm takes a map `state` and a map or array of
-maps `inputDocuments` and returns a map or array of maps `outputMaps`.
+maps `inputDocuments` and returns a map containing a map `state` and a map or
+array of maps `outputMaps`.
         </p>
         <ol>
           <li>
@@ -764,7 +765,10 @@ Set `result` to the result of passing `state`, `input`, `output`, and
 <a href="#general-conversion-algorithm"></a>.
               </li>
               <li>
-Add `result` to `outputMaps`.
+Add `result.output` to `outputMaps`.
+              </li>
+              <li>
+Set `state` to `result.state`.
               </li>
             </ol>
           </li>
@@ -782,7 +786,7 @@ as input and returns a map containing maps `state` and `output`.
         </p>
         <ol>
           <li>
-If `state.strategy` is set to `compression`, set `activeContext` to 
+If `state.strategy` is set to "compression", set `activeContext` to 
 `result.activeContext` and `state` to `result.state` of `result` resulting from  
 <a href="#convert-contexts-for-compression-algorithm"></a>, passing `state`,
 `activeContext`, `input`, and `output`. 
@@ -794,7 +798,7 @@ Otherwise, set `activeContext` to
 `activeContext`, `input`, and `output`.
           </li>
           <li>
-If `state.strategy` is set to `compression`, set `state` to `result.state` and
+If `state.strategy` is set to "compression", set `state` to `result.state` and
 `objectTypes` to `result.objectTypes` for `result` resulting from
 <a href="#get-object-types-for-compression-algorithm"></a>, passing `state`,
 `activeContext`, `input`, and `output`.
@@ -809,7 +813,7 @@ Set `activeContext` to the result of passing `activeContext` and `objectTypes` t
 <a href="#apply-type-scoped-contexts-algorithm"></a>.
           </li>
           <li>
-If `state.strategy` is set to `compression`, set `state` to `result.state` and
+If `state.strategy` is set to "compression", set `state` to `result.state` and
 `termEntries` to `result.termEntries` for `result` resulting from
 <a href="#get-input-entries-for-compression-algorithm"></a>, passing `state`,
 `input`, and `activeContext`.
@@ -830,10 +834,12 @@ Set `valueActiveContext` to the result of passing `activeContext` and `term` to
 <a href="#apply-property-scoped-contexts-algorithm"></a>.
               </li>
               <li>
-Set `plural` to `termInfo.plural` and `termType` to the value of `@type` in `termInfo.def`.
+Set `plural` to the value of `termInfo.plural` and `termType` to the value of `@type`
+in `termInfo.def`.
               </li>
               <li>
-If `plural` is set to `true`, set `values` to `value`. Otherwise, set `values` to `[value]`.
+If `plural` is set to `true`, set `values` to the value of `value`. Otherwise, set `values` to
+an array containing the value of `value` as a single element.
               </li>
               <li>
 Set `outputs` to an empty array.
@@ -852,9 +858,24 @@ Set `state` to `result.state` and add `result.output` to `outputs`.
                 </ol>
               </li>
               <li>
-
+If `plural` is set to `true`, set `outputValues` to `outputs`. Otherwise, set `outputValues`
+to the first element of `outputs`.
+              </li>
+              <li>
+If `state.strategy` is set to "compression", set the value of `termInfo.termId` to map to
+`outputValues` in `output`. Otherwise, set the value of `termInfo.term` to map to `outputValues`
+in `output`.
               </li>
             </ol>
+          </li>
+          <li>
+Set `result` to be an empty map.
+          </li>
+          <li>
+Set `result.state` to `state` and `result.output` to `output`.
+          </li>
+          <li>
+Return `result`.
           </li>
         </ol>
       </section>
@@ -1044,7 +1065,7 @@ integer values:
             </pre>
           </li>
           <li>
-If `state.strategy` is set to `decompression`, set `state.idToTerm` to the reverse map
+If `state.strategy` is set to "decompression", set `state.idToTerm` to the reverse map
 of `state.termToId` (i.e., a map from integers to JSON-LD keywords).
           </li>
           <li>
