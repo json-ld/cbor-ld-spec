@@ -700,8 +700,8 @@ Set `state` to the result of passing `state` to
 <a href="#initialize-conversion-algorithm"></a>.
           </li>
           <li>
-Set `outputMaps` to the result of passing `state` and `jsonldDocument` as `inputDocument` to
-<a href="#convert-document-algorithm"></a>.
+Set `outputMaps` to the result of passing `state` and `jsonldDocument`
+as `inputDocument` to <a href="#convert-document-algorithm"></a>.
           </li>
         </ol>
       </section>
@@ -709,7 +709,6 @@ Set `outputMaps` to the result of passing `state` and `jsonldDocument` as `input
         <h3>CBOR-LD to JSON-LD Decompression Algorithm</h3>
       </section>
     </section>
-
     <section>
       <h2>Converter</h2>
       <section>
@@ -731,7 +730,7 @@ Set `state` to the result of passing `state` to
 <a href="#initialize-context-loader-algorithm"></a>.
           </li>
           <li>
-Set `state` to the result of passing `state` and empty maps `termMap` and
+Set `state.initialActiveContext` to the result of passing empty maps `termMap` and
 `previousActiveContext` to <a href="#initialize-active-context-algorithm"></a>.            
           </li>
           <li>
@@ -742,8 +741,8 @@ Return `state`.
       <section>
         <h3>Convert Document Algorithm</h3>
         <p>
-This algorithm takes a map `state` and a map or array of maps `inputDocuments` and returns
-a map `outputMaps`.
+This algorithm takes a map `state` and a map or array of
+maps `inputDocuments` and returns a map `outputMaps`.
         </p>
         <ol>
           <li>
@@ -760,7 +759,9 @@ For `input` in `inputs`:
 Set `output` to an empty map.
               </li>
               <li>
-
+If `state.strategy` is set to `compression`, set `state` to the result of 
+<a href="#convert-contexts-for-compression-algorithm"></a>, passing `state`,
+`input`, and `output`.
               </li>
             </ol>
           </li>
@@ -777,8 +778,13 @@ This algorithm takes and returns a map `state`.
         <section>
           <h4>Convert Contexts for Compression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state`, `input`, and `output`, and returns a map `output`.
           </p>
+          <ol>
+            <li>
+              
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Convert Value for Compression Algorithm</h4>
@@ -842,30 +848,33 @@ TODO: description
         <section>
           <h3>Initialize Active Context Algorithm</h3>
           <p>
-This algorithm takes maps `state`, `previousActiveContext` and `termMap`
-and returns a map `state`. It updates the active context in use and finds
-all aliases for `'@type'`.
+This algorithm takes maps `previousActiveContext` and `termMap`
+and returns a map `activeContext`. It updates the active context
+in use and finds all aliases for `'@type'`.
           </p>
           <ol>
             <li>
-Set `state.previousActiveContext` to `previousActiveContext`.
+Set `activeContext` to a new map.
             </li>
             <li>
-Set `state.activeContext.termMap` to `termMap`.
+Set `activeContext.previousActiveContext` to `previousActiveContext`.
             </li>
             <li>
-Set `this.activeContext.typeTerms` to the array `['@type']`.
+Set `activeContext.termMap` to `termMap`.
+            </li>
+            <li>
+Set `activeContext.typeTerms` to the array `['@type']`.
             </li>
             <li>
 For `[term, def]` in `termMap`:
               <ol>
                 <li>
-If `def['@id'] == '@type'`, add `term` to `this.activeContext.typeTerms`.
+If `def['@id'] == '@type'`, add `term` to `activeContext.typeTerms`.
                 </li>
               </ol>
             </li>
             <li>
-Return `state`.
+Return `activeContext`.
             </li>
           </ol>
         </section>
