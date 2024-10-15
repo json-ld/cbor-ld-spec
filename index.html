@@ -976,10 +976,16 @@ This algorithm takes and returns a map `state`.
     <section>
       <h2>Active Context Processing</h2>
         <p>
-The algorithms in this section indicate how JSON-LD context documents
-should be processed in order to convert JSON-LD to and from CBOR-LD.
+The algorithms in this section describe how to determine
+what components of the context documents associated with a JSON-LD
+document are in use at any point during compression or decompression.
 These algorithms include how to apply embedded, type-scoped, and
-property-scoped contexts with CBOR-LD.
+property-scoped contexts with CBOR-LD. This is in contrast to the Context
+Loading algorithms defined later in this specification, which describe how
+to construct the mappings from terms to integers that are the core CBOR-LD
+compression technique. Together, the Active Context Processing and Context
+Loading algorithms specify how JSON-LD context documents should be processed
+when converting to and from CBOR-LD.
         </p>
         <section>
           <h3>Initialize Active Context Algorithm</h3>
@@ -1196,7 +1202,8 @@ Return `newTermMap`.
     <section>
       <h2>Context Loading</h2>
       <p>
-TODO: description
+The algorithms in this section define how to construct the mappings between
+terms and integers that are used as the core CBOR-LD compression technique.
       </p>
       <section>
         <h3>Initialize Context Loader Algorithm</h3>
