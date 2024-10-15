@@ -696,6 +696,12 @@ Set `state` to an empty map.
 Set `state.strategy` to "compression".
           </li>
           <li>
+Set `state.typeTable` to `typeTable`.
+          </li>
+          <li>
+Set `state.registryEntryId` to `registryEntryId`.
+          </li>
+          <li>
 Set `state` to the result of passing `state` to
 <a href="#initialize-conversion-algorithm"></a>.
           </li>
@@ -725,14 +731,6 @@ strategy converts from CBOR-LD to JSON-LD.
 This algorithm takes and returns a map `state`.
         </p>
         <ol>
-          <li>
-If `state.strategy` is set to "compression", set `state` to the result of
-<a href="#initialize-compression-algorithm"></a>.
-          </li>
-          <li>
-Otherwise if `state.strategy` is set to "decompression", set `state` to the result of
-<a href="#initialize-decompression-algorithm"></a>.
-          </li>
           <li>
 Set `state` to the result of passing `state` to
 <a href="#initialize-context-loader-algorithm"></a>.
@@ -827,9 +825,10 @@ If `state.strategy` is set to "compression", set `state` to `result.state` and
 `input`, and `activeContext`.
           </li>
           <li>
-Otherwise, set `state` to `result.state` and `termEntries` to `result.termEntries`
-for `result` resulting from <a href="#get-input-entries-for-decompression-algorithm"></a>,
-passing `state`, `input`, and `activeContext`.
+Otherwise, set `state` to `result.state`, `output` to `result.output`,
+and `termEntries` to `result.termEntries` for `result` resulting from 
+<a href="#get-input-entries-for-decompression-algorithm"></a>,
+passing `state`, `input`, output, and `activeContext`.
           </li>
           <li>
 For `[termInfo, value]` in `termEntries`:
@@ -898,20 +897,64 @@ to be used with the "conversion" algorithms defined previously to
 convert JSON-LD to CBOR-LD.
         </p>
         <section>
-          <h4>Initialize Compression Algorithm</h4>
-          <p>
-This algorithm takes and returns a map `state`.
-          </p>
-        </section>
-        <section>
           <h4>Convert Contexts for Compression Algorithm</h4>
           <p>
-This algorithm takes maps `state`, `input`, and `output`, and returns a map `output`.
+This algorithm takes maps `state`, `activeContext`, `input`, and `output`,
+and returns a map `result` containing maps `output`, `state`, and `activeContext`.
           </p>
           <ol>
             <li>
-
+Set `applyEmbeddedResult` to the result of <a href="#apply-embedded-contexts-algorithm"></a>,
+passing `state`, `activeContext`, and `input`.
             </li>
+            <li>
+Set `activeContext` to `applyEmbeddedResult.activeContext` and `state` to
+`applyEmbeddedResult.state`.
+            </li>
+            <li>
+If "@context" does not have an entry in `input`:
+              <ol>
+                <li>
+Set `result` to an empty map.
+                </li>
+                <li>
+Set `result.state` to `state` and `result.activeContext` to `activeContext`.
+                </li>
+                <li>
+Return `result`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `context` to the value of "@context" in `input`.
+            </li>
+            <li>
+Set `encodedContexts` to an empty array.
+            </li>
+            <li>
+If `context` is an array, set `contexts` to `context`. Otherwise, set `contexts` to
+`[context]`.
+            </li>
+            <li>
+For `contextValue` in `contexts`:
+              <ol>
+                <li>
+If `contextValue` is a string: 
+                  <ol>
+                    <li>
+Set `encodingMap` to a new map.
+                    </li>
+                    <li>
+Set the value of `contextValue` in `encodingMap` to the value of "context" in
+`typeTable`
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                </li>
+              </ol>
+            </li>
+
           </ol>
         </section>
         <section>
@@ -1437,6 +1480,21 @@ Return `result`.
 
     <section>
       <h2>Codecs</h2>
+      <section>
+        <h3>Context Codec</h3>
+        <section>
+          <h4>Create Context Encoder</h4>
+        </section>
+        <section>
+          <h4>Encode Context</h4>
+        </section>
+        <section>
+          <h4>Create Context Decoder</h4>
+        </section>
+        <section>
+          <h4>Decode Context</h4>
+        </section>
+      </section>
     </section>
 
     <section>
