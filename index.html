@@ -1196,7 +1196,6 @@ Return `newTermMap`.
             </li>
           </ol>
         </section>
-
     </section>    
 
     <section>
@@ -1263,7 +1262,112 @@ Return `state`.
         </ol>
       </section>
       <section>
+        <h3>Load Context Algorithm</h3>
+        <p>
+This algorithm takes a map `state` and a context map or URL `contextIdentifier` and returns
+`result`, a map containing maps `state` and `entry`.
+        </p>
+        <ol>
+          <li>
+If `state.contextMap` has an entry for `contextIdentifier`:
+            <ol>
+              <li>
+Initialize `result` to an empty map.
+              </li>
+              <li>
+Set `result.state` to `state`.
+              </li>
+              <li>
+Set `result.entry` to the value of `contextIdentifier` in `state.contextMap`.
+              </li>
+              <li>
+Return `result`.
+              </li>
+            </ol>
+          </li>
+          <li>
+If `context` is a string:
+            <ol>
+              <li>
+Fetch the associated context object and set `context` to the value
+of "@context" in that object.
+              </li>
+              <li>
+Set `contextUrl` to the value of `contextIdentifier`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Otherwise, set `context` to `contextIdentifier`.
+          </li>
+          <li>
+Set `result` to the result of <a href="#add-context-algorithm"></a>, passing
+`state`, `context`, and `contextUrl` if set.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
+      </section>
+      <section>
         <h3>Add Context Algorithm</h3>
+        <p>
+This algorithm takes a map `state`, a context object `context`, and a context URL `contextUrl`
+and returns `result`, a map containing maps `state` and `entry`.
+        </p>
+        <ol>
+          <li>
+If `context` has an entry "@import":
+            <ol>
+              <li>
+Set `importUrl` to the value of "@import" in `context.
+              </li>
+              <li>
+If `state.contextMap` does not have an entry for `importUrl`:
+                <ol>
+                  <li>
+Fetch the context object associated with `importUrl` and set `importContext` to the value of
+"@context" in that object.
+                  </li>
+                  <li>
+Set `importedContextAdditionResult` to the result of <a href="#add-context-algorithm"></a>,
+passing `state`, `importContext` as `context`, and `importUrl` as `contextUrl`.
+                  </li>
+                  <li>
+Set `state` to `importedContextAdditionResult.state` and `importEntry` to
+`importedContextAdditionResult.entry`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Otherwise, set `importEntry` to the value of `importUrl` in `state.contextMap`.
+              </li>
+              <li>
+Set `context` to a map containing all entries from `context` as well as `importEntry.context`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Set `termMap` to an empty map.
+          </li>
+          <li>
+Set `entry` to be an object containing `context` and `termMap`.
+          </li>
+          <li>
+Set `sortedTerms` to the result of sorting the keys in `context` in lexicographic order.
+          </li>
+          <li>
+Set `isProtected` to `true` if "@protected" has an entry in `context` and `false` otherwise.
+          </li>
+          <li>
+For `term` in `sortedTerms`:
+            <ol>
+              <li>
+                
+              </li>
+            </ol>
+          </li>
+        </ol>
       </section>
     </section>
 
