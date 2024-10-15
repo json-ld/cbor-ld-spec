@@ -1360,12 +1360,76 @@ Set `sortedTerms` to the result of sorting the keys in `context` in lexicographi
 Set `isProtected` to `true` if "@protected" has an entry in `context` and `false` otherwise.
           </li>
           <li>
+Set `keywordsMap` to the map defined in Step 3 of
+<a href="#initialize-context-loader-algorithm"></a>.
+          </li>
+          <li>
 For `term` in `sortedTerms`:
             <ol>
               <li>
-                
+If `term` has an entry in `keywordsMap`, proceed to the next iteration of this loop.
+              </li>
+              <li>
+Set `definition` to the value of `term` in `context`.
+              </li>
+              <li>
+If `definition` is `null`, proceed to the next iteration of this loop.
+              </li>
+              <li>
+If `definition` is a string:
+                <ol>
+                  <li>
+Set `newDefinition` to an empty map.
+                  </li>
+                  <li>
+Set the value of "@id" in `newDefinition` to `definition`.
+                  </li>
+                  <li>
+Set the value of `definition` to `newDefinition`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Set the value of `protected` in `definition` to `isProtected`.
+              </li>
+              <li>
+Set the value of `term` in `termMap` to `definition`.
+              </li>
+              <li>
+If `term` does not have an entry in `state.termToId`:
+                <ol>
+                  <li>
+Set `termId` to `state.nextTermId`.
+                  </li>
+                  <li>
+Increment `state.nextTermId` by 2.
+                  </li>
+                  <li>
+Set the value of `term` in `state.termToId` to `termId`.
+                  </li>
+                  <li>
+Set the value of `termId` in `state.idToTerm` to `term`.
+                  </li>
+                </ol>
               </li>
             </ol>
+          </li>
+          <li>
+If `contextUrl` is defined, set the value of `contextUrl` in
+`state.contextMap` to `entry`.
+          </li>
+          <li>
+Otherwise, set the value of `context` in `state.contextMap`
+to `entry`.
+          </li>
+          <li>
+Set `result` to be an empty map.
+          </li>
+          <li>
+Set `result.state` to `state` and `result.entry` to `entry`.
+          </li>
+          <li>
+Return `result`.
           </li>
         </ol>
       </section>
