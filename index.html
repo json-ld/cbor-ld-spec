@@ -792,10 +792,18 @@ as input and returns a map containing maps `state` and `output`.
         </p>
         <ol>
           <li>
-If `state.strategy` is set to "compression", set `activeContext` to 
-`result.activeContext` and `state` to `result.state` of `result` resulting from  
-<a href="#convert-contexts-for-compression-algorithm"></a>, passing `state`,
-`activeContext`, `input`, and `output`. 
+If `state.strategy` is set to "compression":
+            <ol>
+              <li>
+Set `contextConversionResult` to the result of
+<a href="#convert-contexts-for-compression-algorithm"></a>, passing
+`state`, `activeContext`, `input`, and `output`.                 
+              </li>
+              <li>
+Set `activeContext` to `contextConversionResult.activeContext`, `output`
+to `contextConversionResult.output`, and `state` to `contextConversionResult.state`.
+              </li>
+            </ol>
           </li>
           <li>
 Otherwise, set `activeContext` to
@@ -932,29 +940,39 @@ Set `context` to the value of "@context" in `input`.
 Set `encodedContexts` to an empty array.
             </li>
             <li>
-If `context` is an array, set `contexts` to `context`. Otherwise, set `contexts` to
-`[context]`.
+If `context` is an array, set `isArray` to `true` and `contexts` to `context`.
+Otherwise, set `isArray` to `false` and `contexts` to `[context]`.
             </li>
             <li>
 For `contextValue` in `contexts`:
               <ol>
                 <li>
-If `contextValue` is a string: 
-                  <ol>
-                    <li>
-Set `encodingMap` to a new map.
-                    </li>
-                    <li>
-Set the value of `contextValue` in `encodingMap` to the value of "context" in
-`typeTable`
-                    </li>
-                  </ol>
+Set `encoderData` to the result of <a href="#create-context-encoder"></a>, passing
+`state.typeTable` and `contextValue`.
                 </li>
                 <li>
+If `encoderData` is an empty map, add `contextValue` to `encodedContexts`.
+                </li>
+                <li>
+Otherwise, add the value of `encoderData` to `encodedContexts`.
                 </li>
               </ol>
             </li>
-
+            <li>
+If `isArray` is `true`, set `id` to the value of "@context" in `state.keywordsMap` plus 1
+and set the value of `id` in `output` to `encodedContexts`.
+            </li>
+            <li>
+Otherwise, set `id` to the value of "@context" in `state.keywordMap` and set the value of
+`id` in `output` to the first element of `encodedContexts`.
+            </li>
+            <li>
+Set `result.output` to `output`, `result.state` to `state`, and `result.activeContext`
+to `activeContext`.
+            </li>
+            <li>
+Return `result`.
+            </li>
           </ol>
         </section>
         <section>
@@ -1260,7 +1278,7 @@ Set `state.contextMap` to a new map.
 Set `state.nextTermId` to 100.
           </li>
           <li>
-Set `state.termToId` to the following map of JSON-LD keywords to their associated
+Set `state.keywordsMap` to the following map of JSON-LD keywords to their associated
 integer values:
             <pre class="nohighlight">
 {
@@ -1294,6 +1312,9 @@ integer values:
   '@propagate' => 54
 }
             </pre>
+          </li>
+          <li>
+Set `state.termToId` to `state.keywordsMap`.
           </li>
           <li>
 If `state.strategy` is set to "decompression", set `state.idToTerm` to the reverse map
@@ -1403,14 +1424,10 @@ Set `sortedTerms` to the result of sorting the keys in `context` in lexicographi
 Set `isProtected` to `true` if "@protected" has an entry in `context` and `false` otherwise.
           </li>
           <li>
-Set `keywordsMap` to the map defined in Step 3 of
-<a href="#initialize-context-loader-algorithm"></a>.
-          </li>
-          <li>
 For `term` in `sortedTerms`:
             <ol>
               <li>
-If `term` has an entry in `keywordsMap`, proceed to the next iteration of this loop.
+If `term` has an entry in `state.keywordsMap`, proceed to the next iteration of this loop.
               </li>
               <li>
 Set `definition` to the value of `term` in `context`.
@@ -1484,9 +1501,32 @@ Return `result`.
         <h3>Context Codec</h3>
         <section>
           <h4>Create Context Encoder</h4>
+          <p>
+This algorithm takes a map `typeTable` and a value `contextValue` and
+returns a map `encoderData`.
+          </p>
+          <ol>
+            <li>
+Initialize `encoderData` to an empty map.
+            </li>
+            <li>
+If `contextValue` is not a string, return `result`.
+            </li>
+            <li>
+Otherwise, set `contextTable` to the value of "context" in `typeTable`.
+            </li>
+            <li>
+Set `encoderData.context` to `contextValue` and `encoderData.contextTable` to
+`contextTable`.
+            </li>
+            <li>
+Return `encoderData`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Encode Context</h4>
+
         </section>
         <section>
           <h4>Create Context Decoder</h4>
