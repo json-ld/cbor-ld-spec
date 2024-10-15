@@ -710,7 +710,15 @@ as `inputDocument` to <a href="#convert-document-algorithm"></a>.
       </section>
     </section>
     <section>
-      <h2>Converter</h2>
+      <h2>Conversion Algorithms</h2>
+      <p>
+The algorithms in this section describe the behavior of a "converter" for abstractly
+converting inputs between data forms. When used in conjunction with a "strategy",
+such as the "compression" and "decompression" strategies defined later in this section,
+these algorithms can be instantiated to convert between concrete data forms. The
+"compression" strategy converts from JSON-LD to CBOR-LD, while the "decompression"
+strategy converts from CBOR-LD to JSON-LD.
+      </p>
       <section>
         <h3>Initialize Conversion Algorithm</h3>
         <p>
@@ -722,7 +730,7 @@ If `state.strategy` is set to "compression", set `state` to the result of
 <a href="#initialize-compression-algorithm"></a>.
           </li>
           <li>
-Else if `state.strategy` is set to "decompression", set `state` to the result of
+Otherwise if `state.strategy` is set to "decompression", set `state` to the result of
 <a href="#initialize-decompression-algorithm"></a>.
           </li>
           <li>
@@ -883,7 +891,12 @@ Return `result`.
         <h3>Convert Value Algorithm</h3>
       </section>
       <section>
-        <h3>Compressor</h3>
+        <h3>Compression Strategy Algorithms</h3>
+        <p>
+The algorithms in this section define the "compression" strategy
+to be used with the "conversion" algorithms defined previously to
+convert JSON-LD to CBOR-LD.
+        </p>
         <section>
           <h4>Initialize Compression Algorithm</h4>
           <p>
@@ -921,7 +934,12 @@ This algorithm takes and returns a map `state`.
         </section>
       </section>
       <section>
-        <h3>Decompressor</h3>
+        <h3>Decompression Strategy Algorithms</h3>
+        <p>
+The algorithms in this section define the "decompression" strategy
+to be used with the "conversion" algorithms defined previously to
+convert CBOR-LD to JSON-LD.
+        </p>
         <section>
           <h4>Initialize Decompression Algorithm</h4>
           <p>
@@ -956,9 +974,12 @@ This algorithm takes and returns a map `state`.
     </section>
 
     <section>
-      <h2>Active Context</h2>
+      <h2>Active Context Processing</h2>
         <p>
-TODO: description
+The algorithms in this section indicate how JSON-LD context documents
+should be processed in order to convert JSON-LD to and from CBOR-LD.
+These algorithms include how to apply embedded, type-scoped, and
+property-scoped contexts with CBOR-LD.
         </p>
         <section>
           <h3>Initialize Active Context Algorithm</h3>
@@ -1116,12 +1137,64 @@ Return `result`.
         </section>
         <section>
           <h3>Revert Term Map Algorithm</h3>
+          <p>
+This algorithm takes as input a map `activeContext` and returns a map
+`newTermMap`.
+          </p>
+          <ol>
+            <li>
+Set `newTermMap` to an empty map.
+            </li>
+            <li>
+Set `nonPropagatingTerms` to an empty array.
+            </li>
+            <li>
+For `[term, def]` in `activeContext`:
+              <ol>
+                <li>
+If `def.propagate` is set to `false`, add `term` to `nonPropagatingTerms`
+and proceed to the next iteration of this loop.
+                </li>
+                <li>
+Otherwise, set the value of `term` in `newTermMap` to `def`.
+                </li>
+              </ol>
+            </li>
+            <li>
+For `term` in `nonPropagatingTerms`:
+              <ol>
+                <li>
+Set `currentContext` to `activeContext.previousActiveContext`.
+                </li>
+                <li>
+Set `def` to the value of `term` in `currentContext.termMap`.
+                </li>
+                <li>
+While `def` is not undefined and `def.propagate` is set to `false`:
+                  <ol>
+                    <li>
+Set `currentContext` to `activeContext.previousActiveContext`.
+                    </li>
+                    <li>
+Set `def` to the value of `term` in `currentContext.termMap`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If `def` is not undefined, set the value of `term` in `newTermMap` to `def`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `newTermMap`.
+            </li>
+          </ol>
         </section>
 
     </section>    
 
     <section>
-      <h2>Context Loader</h2>
+      <h2>Context Loading</h2>
       <p>
 TODO: description
       </p>
