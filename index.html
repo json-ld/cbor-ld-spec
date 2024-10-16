@@ -472,8 +472,11 @@ CBOR tag values, we define the following.
       <p>
 Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
 as the beginning of a varint. If the CBOR tag is in the range `0x0600`–`0x067F`, the last byte of
-the CBOR tag is a one-byte varint. If the CBOR tag is `0x0680` or greater, the first item in the
-CBOR payload MUST be a major type 2 byte string containing the rest of the varint. See Algorithm <a
+the CBOR tag is a one-byte varint, and the tagged item MUST be a map containing the encoded
+JSON-LD. If the CBOR tag is `0x0680` or greater, the tagged item MUST be an array containing
+two elements. The first item in the array MUST be a major type 2 byte string containing the
+rest of the varint, and the second item in the array MUST be a map containing the
+encoded JSON-LD. See Algorithm <a
 href="#get-cbor-ld-varint-structure-algorithm"></a> for
 more information.
       </p>
@@ -490,7 +493,7 @@ consumers of CBOR-LD payloads the information they need to reconstruct the term 
 required for decompression. A <b>CBOR-LD Varint Registry Entry</b> contains the following:
         <ol>
           <li>
-Registry Entry Value: a positive integer.
+Registry Entry ID: a positive integer.
           </li>
           <li>
 Use Case: what type of CBOR-LD payload this entry is used for.
@@ -506,6 +509,10 @@ type encoders are used alongside the `Type Tables` (e.g. how to partially compre
 `xsd:dateTime` value that does not appear in `Type Table`). The default processing model,
 which will be defined later in this specification, will be used unless otherwise specified
 in the Registry Entry.
+          </li>
+          <li>
+Provisional: a yes/no flag indicating whether the entry is provisional. Provisional entries
+may change or be removed.
           </li>
         </ol>
       </p>
@@ -541,6 +548,7 @@ The following is the current CBOR-LD registry:
             <th>Use Case</th>
             <th>typeTables</th>
             <th>Processing Model</th>
+            <th>Provisional</th>
           </tr>
         </thead>
         <tbody>
@@ -549,12 +557,14 @@ The following is the current CBOR-LD registry:
           <td>Uncompressed CBORLD</td>
           <td>None</td>
           <td>DEFAULT</td>
+          <td>No</td>
           </tr>
           <tr>
             <td>1</td>
             <td>Compressed CBORLD, default use case.</td>
             <td>DEFAULT</td>
             <td>DEFAULT</td>
+            <td>No</td>
           </tr>
           <tr>
             <td>100</td>
@@ -583,6 +593,7 @@ The following is the current CBOR-LD registry:
 ]
             </td>
             <td>DEFAULT</td>
+            <td>Yes</td>
           </tr>
         </tbody>
       </table>
