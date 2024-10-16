@@ -740,6 +740,13 @@ Set `state.initialActiveContext` to the result of passing empty maps `termMap` a
 `previousActiveContext` to <a href="#initialize-active-context-algorithm"></a>.            
           </li>
           <li>
+Set `state.typesEncodedAsBytes` to an empty set.
+          </li>
+          <li>
+Add "none", "http://www.w3.org/2001/XMLSchema#date", "http://www.w3.org/2001/XMLSchema#dateTime",
+and "url" to `state.typesEncodedAsBytes`.
+          </li>
+          <li>
 Return `state`.
           </li>
         </ol>
@@ -1314,7 +1321,7 @@ integer values:
             </pre>
           </li>
           <li>
-Set `state.termToId` to `state.keywordsMap`.
+Add each entry in `state.keywordsMap` to `state.termToId`.
           </li>
           <li>
 If `state.strategy` is set to "decompression", set `state.idToTerm` to the reverse map
@@ -1526,13 +1533,66 @@ Return `encoderData`.
         </section>
         <section>
           <h4>Encode Context</h4>
-
         </section>
         <section>
           <h4>Create Context Decoder</h4>
         </section>
         <section>
           <h4>Decode Context</h4>
+        </section>
+      </section>
+      <section>
+        <h3>Value Codec</h3>
+        <section>
+          <h4>Create Value Encoder</h4>
+          <p>
+This algorithm takes maps `state`, `typeTable`, and `termInfo` and a value
+`termType` and returns a map `encoderData`.
+          </p>
+          <ol>
+            <li>
+Set `isUrl` to `false`.
+            </li>
+            <li>
+If `termInfo.term` is "@id" or "@type", set `isUrl` to `true`.
+            </li>
+            <li>
+If the value of "@id" in `termInfo.def` is "@id" or "@type", set
+`isUrl` to true.
+            </li>
+            <li>
+If `termType` is "@id" or "@vocab", set `isUrl` to `true`.
+            </li>
+            <li>
+If `isUrl` is `true`, set `tableType` to "url".
+            </li>
+            <li>
+Otherwise, if `termType` is defined, set `tableType` to `termType`.
+            </li>
+            <li>
+Otherwise, set `tableType` to "none".
+            </li>
+            <li>
+If `state.typeTable` has an entry for `tableType`:
+              <ol>
+                <li>
+Set `subTable` to the value of `tableType` in `state.typeTable`.
+                </li>
+                <li>
+Set `intValue` to the value of 
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </section>
+        <section>
+          <h4>Encode Value</h4>
+        </section>
+        <section>
+          <h4>Create Value Decoder</h4>
+        </section>
+        <section>
+          <h4>Decode Value</h4>
         </section>
       </section>
     </section>
