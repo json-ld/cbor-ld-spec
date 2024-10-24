@@ -631,6 +631,41 @@ The following is the current CBOR-LD registry:
             <td>DEFAULT</td>
             <td>Yes</td>
           </tr>
+          <tr>
+            <td>10002</td>
+            <td>Provisional First Responder SAP Credentials</td>
+            <td>
+[
+  {
+    type: "context",
+    table:
+    {
+      "https://www.w3.org/ns/credentials/v2": 1,
+      "https://w3id.org/vc-barcodes/v1": 2,
+      "https://w3id.org/first-responder/sap/v1rc1": 3,
+    }
+  },
+  {
+    type: "https://w3id.org/security#cryptosuiteString",
+    table: 
+    {
+      "ecdsa-rdfc-2019": 1
+    }
+  },
+  {
+    type: "url",
+    table: 
+    {
+      "did:key:zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee": 1,
+      "did:key:zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee#zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee": 2,
+      "https://caloes.ca.gov/statuses/12345/status-lists": 3
+    }
+  }
+]
+            </td>
+            <td>DEFAULT</td>
+            <td>Yes</td>
+          </tr>
         </tbody>
       </table>
 
