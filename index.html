@@ -1210,7 +1210,8 @@ Return `result`.
           <h3>Update Term Map Algorithm</h3>
           <p>
 This algorithm takes maps `state`, `activeTermMap`, and map or array `contexts` as well as booleans `typeScope`
-and `propertyScope`, both of which default to `false` if not provided, as inputs.
+and `propertyScope`, both of which default to `false` if not provided, as inputs. It returns maps `state`
+and `activeTermMap`.
           </p>
           <ol>
             <li>
@@ -1231,12 +1232,67 @@ Set `loadResult` to the result of <a href="#load-context-algorithm"></a>, passin
 `contextIdentifier`.
                 </li>
                 <li>
-Set `entry` to `loadResult`.`entry` and `context` to `entry`.`context`.
+Set `entry` to `loadResult`.`entry`, `context` to `entry`.`context`, and `state` to `loadResult`.`state`.
                 </li>
                 <li>
-                  
+If `@propagate` appears in `context`, set `propagate` to the value of `@propagate` in `context`.
+Otherwise, set `propagate` to the value of `propagateDefault`.
                 </li>
+                <li>
+Set `newTermMap` to be an empty map. For [`key`, `value`] in `entry`.`termMap`:
+                  <ol>
+                    <li>
+Shallow copy the contents of `value` into a new map `newValue` and add `propagate`
+to `newValue`. 
+                    </li>
+                    <li>
+Set the value of `key` in `newTermMap` to `newValue`.
+                    </li>
+                  </ol>
+                </li> 
+                <li>
+For [`term`, `activeDef`] in `activeTermMap`:
+                  <ol>
+                    <li>
+Let `def` be the value of `term` in `newTermMap`.
+                    </li>
+                    <li>
+If `def` is defined:
+                      <ol>
+                        <li>
+If the value of `protected` in `activeDef` is `true`:
+                          <ol>
+                            <li>
+If `allowProtectedOverride` is set to `false` and `def` is not identical to `activeDef`,
+throw an error ERR_PROTECTED_TERM_REDEFINITION.
+                            </li>
+                            <li>
+Otherwise, set the value of `term` in `newTermMap` to a map containing the values from `activeDef`
+and `propagate` set to the value of `def`.`propagate`.
+                            </li>
+                          </ol>
+                        </li>
+                      </ol>
+                    </li>
+                    <li>
+Otherwise, if `term` appears in `context`, set the value of `term` in `newTermMap` to
+a map containing all values from `activeDef`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set the value of `activeTermMap` to the value of `newTermMap`.
+                </li>   
               </ol>
+            </li>
+            <li>
+Set `result` to be an empty map.
+            </li>
+            <li>
+Set `result`.`state` to `state` and `result`.`activeTermMap` to `activeTermMap`.
+            </li>
+            <li>
+Return `result`.
             </li>
           </ol>
         </section>
