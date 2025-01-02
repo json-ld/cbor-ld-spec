@@ -1208,6 +1208,37 @@ Return `result`.
         </section>
         <section>
           <h3>Update Term Map Algorithm</h3>
+          <p>
+This algorithm takes maps `state`, `activeTermMap`, and map or array `contexts` as well as booleans `typeScope`
+and `propertyScope`, both of which default to `false` if not provided, as inputs.
+          </p>
+          <ol>
+            <li>
+If `contexts` is not an array, set `contexts` to be an array with the previous value of `contexts`
+as its sole element.
+            </li>
+            <li>
+Set `allowProtectedOverride` to the value of `propertyScope`.
+            </li>
+            <li>
+Set `propagateDefault` to the negation of the value of `typeScope`.
+            </li>
+            <li>
+For `contextIdentifier` in `contexts`:
+              <ol>
+                <li>
+Set `loadResult` to the result of <a href="#load-context-algorithm"></a>, passing `state` and
+`contextIdentifier`.
+                </li>
+                <li>
+Set `entry` to `loadResult`.`entry` and `context` to `entry`.`context`.
+                </li>
+                <li>
+                  
+                </li>
+              </ol>
+            </li>
+          </ol>
         </section>
         <section>
           <h3>Revert Term Map Algorithm</h3>
