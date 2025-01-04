@@ -1636,9 +1636,40 @@ Otherwise, return a CBOR encoding of the value of `encoderData`.`context` as a M
         </section>
         <section>
           <h4>Create Context Decoder</h4>
+          <p>
+This algorithm takes a map `reverseTypeTable`and
+returns a map `encoderData`.
+          </p>
+          <ol>
+            <li>
+Set `reverseContextTable` to the value of "context" in `reverseTypeTable`.
+            </li>
+            <li>
+Initialize `decoderData` to an empty map.
+            </li>
+            <li>
+Set `decoderData`.`reverseContextTable` to the value of `reverseContextTable` and
+return `decoderData`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Decode Context</h4>
+          <p>
+This algorithm takes a map `decoderData` and a value `value` and returns a value.
+          </p>
+          <ol>
+            <li>
+If `value` is not a number, return `value`.
+            </li>
+            <li>
+Otherwise, if `decoderData`.`reverseContextTable` has an entry for `value`, return
+the value of that entry.
+            </li>
+            <li>
+Otherwise, throw an error ERR_UNDEFINED_COMPRESSED_CONTEXT.
+            </li>
+          </ol>
         </section>
       </section>
       <section>
