@@ -1604,7 +1604,7 @@ returns a map `encoderData`.
 Initialize `encoderData` to an empty map.
             </li>
             <li>
-If `contextValue` is not a string, return `result`.
+If `contextValue` is not a string, return.
             </li>
             <li>
 Otherwise, set `contextTable` to the value of "context" in `typeTable`.
@@ -1633,8 +1633,8 @@ Return `encoderData`.
         <section>
           <h4>Create Value Encoder</h4>
           <p>
-This algorithm takes maps `state`, `typeTable`, and `termInfo` and a value
-`termType` and returns a map `encoderData`.
+This algorithm takes maps `state`, `typeTable`, and `termInfo` and values
+`termType` and `valueToEncode` and returns a map `encoderData` or `valueToEncode`.
           </p>
           <ol>
             <li>
@@ -1666,10 +1666,54 @@ If `state.typeTable` has an entry for `tableType`:
 Set `subTable` to the value of `tableType` in `state.typeTable`.
                 </li>
                 <li>
-Set `intValue` to the value of 
+If `subTable` has an entry for `valueToEncode`:
+                  <ol>
+                    <li>
+Set `intValue` to the value of `valueToEncode` in `subTable`. Set `includeSign` to `false`.
+                    </li>
+                    <li>
+If `state`.`typesEncodedAsBytes` has an entry for `tableType`, set `convertToBytes` to `true`.
+Otherwise, set `convertToBytes` to `false`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Otherwise, if `tableType` is not "none" and `valueToEncode` is an integer:
+                  <ol>
+                    <li>
+Set `intValue` to the value of `valueToEncode`.
+                    </li>
+                    <li>
+Set `convertToBytes` and `includeSign` to `true`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If `intValue` is defined:
+                  <ol>
+                    <li>
+Initialize `encoderData` to an empty map.
+                    </li>
+                    <li>
+Set `encoderData`.`intValue` to the value of `intValue`, `encoderData`.`convertToBytes` to
+the value of `convertToBytes`, and `encoderData`.`includeSign` to the value of `includeSign`.
+                    </li>
+                    <li>
+Return `encoderData`.
+                    </li>
+                  </ol>
                 </li>
               </ol>
             </li>
+            <li>
+If `tableType` has an entry in `state.processingModeTypeEncoders`, set `encoderData` to the result of
+calling the `Create Encoder` algorithm associated with that entry's codec.
+            </li>
+            <li>
+If `encoderData` is defined, return `encoderData`.
+            </li>
+            <li>
+Return `valueToEncode`.
           </ol>
         </section>
         <section>
