@@ -1633,7 +1633,7 @@ Return `encoderData`.
         <section>
           <h4>Create Value Encoder</h4>
           <p>
-This algorithm takes maps `state`, `typeTable`, and `termInfo` and values
+This algorithm takes maps `state` and `termInfo` and values
 `termType` and `valueToEncode` and returns a map `encoderData` or `valueToEncode`.
           </p>
           <ol>
@@ -1714,6 +1714,7 @@ If `encoderData` is defined, return `encoderData`.
             </li>
             <li>
 Return `valueToEncode`.
+            </li>
           </ol>
         </section>
         <section>
@@ -1741,6 +1742,99 @@ Otherwise, return a CBOR encoding of `intValue` as a Major Type 0 (unsigned inte
         </section>
         <section>
           <h4>Create Value Decoder</h4>
+          <p>
+This algorithm takes maps `state` and `termInfo` and values
+`termType` and `valueToDecode` and returns a map `decoderData`.
+          </p>
+          <ol>
+            <li>
+Set `isUrl` to `false`.
+            </li>
+            <li>
+If `termInfo.term` is "@id" or "@type", set `isUrl` to `true`.
+            </li>
+            <li>
+If the value of "@id" in `termInfo.def` is "@id" or "@type", set
+`isUrl` to true.
+            </li>
+            <li>
+If `termType` is "@id" or "@vocab", set `isUrl` to `true`.
+            </li>
+            <li>
+If `isUrl` is `true`, set `tableType` to "url".
+            </li>
+            <li>
+Otherwise, if `termType` is defined, set `tableType` to `termType`.
+            </li>
+            <li>
+Otherwise, set `tableType` to "none".
+            </li>
+            <li>
+If `state.reverseTypeTable` has an entry for `tableType`:
+              <ol>
+                <li>
+Set `subTable` to the value of `tableType` in `state.reverseTypeTable`.
+                </li>
+                <li>
+Set `useTable` to `false`.
+                </li>
+                <li>
+If `valueToDecode` is a byte array and `state`.`typesEncodedAsBytes` has an entry
+for `tableType`:
+                  <ol>
+                    <li>
+Set `useTable` to `true`.
+                    </li>
+                    <li>
+Set `intValue` to the unsigned integer conversion of the `valueToDecode` bytes.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Otherwise if `valueToDecode` is an integer and `state`.`typesEncodedAsBytes` does not
+have an entry for `tableType`:
+                  <ol>
+                    <li>
+Set `useTable` to `true`.
+                    </li>
+                    <li>
+Set `intValue` to `valueToDecode`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+If `useTable` is `true`:
+                  <ol>
+                    <li>
+If `intValue` is not in `subTable`. throw an error ERR_UNKNOWN_COMPRESSED_VALUE.
+                    </li>
+                    <li>
+Otherwise, set `decoded` to the value of `intValue` in `subTable`.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Otherwise if `valueToDecode` is a byte array and `tableType` is not "none", set
+`decoded` to the integer conversion of `valueToDecode`.
+                </li>
+                <li>
+If `decoded` is defined, initialize `decoderData` to an empty map, set `decoderData`.`decoded` to
+the value of `decoded`, and return `decoderData`.
+                </li>
+              </ol>
+            </li>
+            <li>
+If `tableType` has an entry in `state.processingModeTypeDecoders`, set `DecoderData` to the result of
+calling the `Create Decoder` algorithm associated with that entry's codec.
+            </li>
+            <li>
+If `decoderData` is defined, return `decoderData`.
+            </li>
+            <li>
+Otherwise, if `valueToDecode` is not an array, initialize `decoderData` to an empty map, set
+`decoderData`.`decoded` to `valueToDecode`, and return `decoderData`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Decode Value</h4>
