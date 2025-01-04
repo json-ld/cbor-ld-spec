@@ -1896,6 +1896,82 @@ Return `decoderData`.`decoded`.
 
     <section>
       <h2>CBOR Tag Processing</h2>
+      <section>
+        <h3>Get CBOR-LD Varint Structure Algorithm</h3>
+This algorithm takes as input an integer `registryEntryId` and returns the CBOR encoding of that registry
+entry ID.
+        <ol>
+          <li>
+If `registryEntryId` is less than 128:
+            <ol>
+              <li>
+Set `varintEncoded` to the byte encoding of `registryEntryId`.
+              </li>
+              <li>
+Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
+0xD906, and set `varintBytesValue` to `null`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Otherwise:
+            <ol>
+              <li>
+Set `varintArray` to an array containing the varint representation of `registryEntryId`.
+              </li>
+              <li>
+Set `varintTagValue` to `varintArray[0]` appended to the end of the bytes 0xD906.
+              </li>
+              <li>
+Set `varintBytesValue` to a CBOR byte string containing the rest of `varintArray`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Return {varintTagValue, varintBytesValue}.
+          </li>
+        </ol>
+      </section>
+      <section>
+        <h2>Get CBOR-LD Registry Entry ID Algorithm</h2>
+        <p>
+This algorithm takes an encoded CBOR-LD payload `cborldBytes` as input and returns
+the <b>Registry Entry Id</b> for the <b>CBOR-LD Registry Entry</b> that should be used to
+decompress `cborldBytes`.
+        </p>
+        <ol>
+          <li>
+If the CBOR tag on `cborldBytes` is not in the range `0x0600-0x06FF`, throw an
+ERR_NON_CBOR_LD_TAG error.
+          </li>
+          <li>
+Otherwise if the CBOR tag on `cborldBytes` is in the range `0x0600-0x067F`, set `registryEntryId` to
+the value of the last byte of the CBOR tag.          
+          </li>
+          <li>
+Otherwise:
+            <ol>
+              <li>
+If the last byte of the CBOR tag does not form the first byte of a valid varint, throw an
+ERR_INVALID_VARINT_VALUE error.
+              </li>
+              <li>
+If the CBOR tagged item is not an array containing exactly two elements, throw an ERR_INVALID_VARINT_STRUCTURE
+error.
+              </li>
+              <li>
+Otherwise, set the value of `registryEntryId` to the value of the varint for which the first byte is the last
+byte of the CBOR tag and the rest of the varint is the first element in the two element array.
+              </li>
+            </ol>
+            
+          </li>
+          <li>
+Return `registryEntryId`.
+          </li>
+        </ol>
+      </section>
+      
     </section>
 
 
@@ -2128,39 +2204,7 @@ Return `result`.
         </ol>
       </section>
       <section>
-        <h3>Get CBOR-LD Varint Structure Algorithm</h3>
-This algorithm takes as input an integer `registryEntryId`.
-        <ol>
-          <li>
-If `registryEntryId` is less than 128:
-            <ol>
-              <li>
-Set `varintEncoded` to the byte encoding of `registryEntryId`.
-              </li>
-              <li>
-Set `varintTagValue` to the result of appending `varintEncoded` to the end of the bytes
-0xD906, and set `varintBytesValue` to `null`.
-              </li>
-            </ol>
-          </li>
-          <li>
-Otherwise:
-            <ol>
-              <li>
-Set `varintArray` to an array containing the varint representation of `registryEntryId`.
-              </li>
-              <li>
-Set `varintTagValue` to `varintArray[0]` appended to the end of the bytes 0xD906.
-              </li>
-              <li>
-Set `varintBytesValue` to a CBOR array containing the rest of `varintArray`.
-              </li>
-            </ol>
-          </li>
-          <li>
-Return {varintTagValue, varintBytesValue}.
-          </li>
-        </ol>
+        
       </section>
     </section>
     <section>
