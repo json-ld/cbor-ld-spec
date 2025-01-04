@@ -1620,6 +1620,19 @@ Return `encoderData`.
         </section>
         <section>
           <h4>Encode Context</h4>
+          <p>
+This algorithm takes a map `encoderData` and returns CBOR binary data.
+          </p>
+          <ol>
+            <li>
+If `encoderData`.`context` has an entry in `encoderData`.`contextTable`, return a CBOR encoding
+of the value of `encoderData`.`context` in `encoderData` as a Major Type 0 (unsigned integer) object.
+            </li>
+            <li>
+Otherwise, return a CBOR encoding of the value of `encoderData`.`context` as a Major Type 3
+(text string) object.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Create Context Decoder</h4>
@@ -1838,6 +1851,14 @@ Otherwise, if `valueToDecode` is not an array, initialize `decoderData` to an em
         </section>
         <section>
           <h4>Decode Value</h4>
+          <p>
+This algorithm takes a map `decoderData` and returns a value.
+          </p>
+          <ol>
+            <li>
+Return `decoderData`.`decoded`.  
+            </li>          
+          </ol>
         </section>
       </section>
     </section>
