@@ -709,6 +709,9 @@ Set `state` to the result of passing `state` to
 Set `outputMaps` to the result of passing `state` and `jsonldDocument`
 as `inputDocument` to <a href="#convert-document-algorithm"></a>.
           </li>
+          <li>
+
+          </li>
         </ol>
       </section>
       <section>
@@ -1051,15 +1054,40 @@ Add `entry` to `entries`.
               </ol>
             </li>
             <li>
-Return `entries`.
+Return an object `result` containing `entries` and `state`.
             </li>
           </ol>
         </section>
         <section>
           <h4>Get Object Types for Compression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `activeContext` and `input` and returns a set
+`objectTypes`.
           </p>
+          <ol>
+            <li>
+Set `objectTypes` to be an empty set.
+            </li>
+            <li>
+For `term` in `activeContext`.`typeTerms`:
+              <ol>
+                <li>
+If `term` has an entry in `input`:
+                  <ol>
+                    <li>
+Set `types` to the value of `term` in `input`.
+                    </li>
+                    <li>
+Add each value in `types` to `objectTypes`.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `objectTypes`.
+            </li>
+          </ol>
         </section>
       </section>
       <section>
