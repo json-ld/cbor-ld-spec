@@ -985,14 +985,75 @@ Return `result`.
         <section>
           <h4>Convert Value for Compression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state` and `termInfo` and values `valueToEncode` and `termType`
+and returns a map `encoderData`.
           </p>
+          <ol>
+            <li>
+If `valueToEncode` is an object, return.
+            </li>
+            <li>
+Otherwise, set `result` to the result of <a href="#create-value-encoder"></a>, passing
+`state`, `termInfo`, `valueToToEncode`, and `termType`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Get Input Entries for Compression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state`, `activeContext`, and `input` and returns a map `state` and an array `entries`.
           </p>
+          <ol>
+            <li>
+Initialize `entries` as an empty array.
+            </li>
+            <li>
+Set an array `keys` to the keys of `input`, sorted lexicographically.
+            </li>
+            <li>
+For `key` in `keys`:
+              <ol>
+                <li>
+If `key` is "@context", continue.
+                </li>
+                <li>
+Set `value` to the value of `key` in `input`.
+               </li>
+                <li>
+If `value` is an array, set `plural` to `true`. Otherwise, set `plural` to `false`.
+                </li>
+                <li>
+If `key` does not have an entry in `state`.`termToId`, set `termId` to `key`.
+                </li>
+                <li>
+Otherwise, if `plural` is `true`, set `termId` to the value of `key` in `state`.`termToId` plus 1.
+                </li>
+                <li>
+Otherwise, set `termId` to the value of `key` in `state`.`termToId`.
+                </li>
+                <li>
+If `activeContext`.`termMap` has an entry for `key`, set `definition` to the value of `key` in
+`activeContext`.`termMap`. Otherwise, set `definition` to an empty map.
+                </li>
+                <li>
+Set `entryTerm` to be a new map.
+                </li>
+                <li>
+Set the value of "term" in `entryTerm` to be the value of `key`. Add `termId`, `plural`, and `definition`
+to `entryTerm`.
+                </li>
+                <li>
+Create an array `entry` with two elements, `entryTerm` and `value`.
+                </li>
+                <li>
+Add `entry` to `entries`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `entries`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Get Object Types for Compression Algorithm</h4>
