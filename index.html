@@ -1243,8 +1243,84 @@ Return a map `result` containing `entries` and `state`.
         <section>
           <h4>Get Object Types for Decompression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state`, `activeContext`, `input` as inputs and
+returns a map `state` and a set `objectTypes`.
           </p>
+          <ol>
+            <li>
+Set `objectTypes` to be an empty set.
+            </li>
+            <li>
+For `term` in `activeContext`.`typeTerms`:
+              <ol>
+                <li>
+If `term` does not have an entry in `state`.`termToId`, set `termId` to `term`.
+                </li>
+                <li>
+Otherwise, set `termId` to the value of `term` in `state`.`termToId`.
+                </li>
+                <li>
+If neither `termId` nor `termId` plus 1 are present in `input`, continue.
+                </li>
+                <li>
+Otherwise, if `termId` is present in `input`, set `value` to the value of `termId` in `input`.
+                </li>
+                <li>
+Otherwise, set `value` to the value of `termId` plus 1 in `input`.
+                </li>
+                <li>
+If `key` is a string, set `plural` to false and `term` to `key`.
+                </li>
+                <li>
+Otherwise:
+                  <ol>
+                    <li>
+If `key` is odd, set `plural` to true. Otherwise, set `plural` to false.
+                    </li>
+                    <li>
+If `plural` is `true`, set `term` to the value of `id` minus 1 in `state`.`idToTerm`.
+If that value does not have an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                    <li>
+Otherwise, set `term` to the value of `id` in `state`.`idToTerm`. If that value does not have
+an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set `definition` to the value of `term` in `activeContext`.`termMap`.          
+                </li>
+                <li>
+Set `termInfo` to be a new map.
+                </li>
+                <li>
+Add `term`, `termId`, `plural`, and `definition` to `termInfo`.
+                </li>
+                <li>
+If `value` is not an array, set `values` to be an array containing as a single element `value`.
+Otherwise, set `values` to the value of `value`.
+                </li>
+                <li>
+For each `value` in `values`:
+                  <ol>
+                    <li>
+Set `decoderData` to the result of <a href="#create-value-decoder"></a>, passing `value`,
+`termInfo`, `state`, and "@vocab" as `termType`.
+                    </li>
+                    <li>
+If `decoderData` exists, add the result of <a href="#decode-value"></a>, passing `decoderData`, to `objectTypes.
+                    </li>
+                    <li>
+Otherwise, add `value` to `objectTypes`.
+                    </li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>
+Return `objectTypes`.
+            </li>
+          </ol>
         </section>
       </section>
     </section>
@@ -1287,7 +1363,7 @@ Set `activeContext.typeTerms` to the array `['@type']`.
 For `[term, def]` in `termMap`:
               <ol>
                 <li>
-If `def['@id'] == '@type'`, add `term` to `activeContext.typeTerms`.
+If the value of "@id" in `def` is "@type", add `term` to `activeContext.typeTerms`.
                 </li>
               </ol>
             </li>
