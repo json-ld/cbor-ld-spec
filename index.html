@@ -1160,8 +1160,22 @@ Return `result`.
         <section>
           <h4>Convert Value for Decompression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state` and `termInfo` and values `termType` and `valueToDecode` and returns a value
+`decodedValue`.
           </p>
+          <li>
+If `value` is a map, return.
+          </li>
+          <li>
+Set `decoderData` to the result of <a href="#create-value-decoder"></a>, passing `valueToDecode`,
+`state`, `termInfo`, and `termType`.
+          </li>
+          <li>
+Set `decodedValue` to the result of <a href="#decode-value"></a>, passing `decoderData`.
+          </li>
+          <li>
+Return `decodedValue`.
+          </li>
         </section>
         <section>
           <h4>Get Input Entries for Decompression Algorithm</h4>
