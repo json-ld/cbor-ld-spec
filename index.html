@@ -1054,7 +1054,7 @@ Add `entry` to `entries`.
               </ol>
             </li>
             <li>
-Return an object `result` containing `entries` and `state`.
+Return a map `result` containing `entries` and `state`.
             </li>
           </ol>
         </section>
@@ -1163,25 +1163,82 @@ Return `result`.
 This algorithm takes maps `state` and `termInfo` and values `termType` and `valueToDecode` and returns a value
 `decodedValue`.
           </p>
-          <li>
+          <ol>
+            <li>
 If `value` is a map, return.
-          </li>
-          <li>
+            </li>
+            <li>
 Set `decoderData` to the result of <a href="#create-value-decoder"></a>, passing `valueToDecode`,
 `state`, `termInfo`, and `termType`.
-          </li>
-          <li>
+            </li>
+            <li>
 Set `decodedValue` to the result of <a href="#decode-value"></a>, passing `decoderData`.
-          </li>
-          <li>
+            </li>
+            <li>
 Return `decodedValue`.
-          </li>
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Get Input Entries for Decompression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state`, `activeContext`, and `input` and returns a map `state` and an array
+`entries`.
           </p>
+          <ol>
+            <li>
+Initialize `entries` to an empty array.
+            </li>
+            <li>
+For key-value pair `key` and `value` in `input`:
+              <ol>
+                <li>
+If `key` is the value of "@context" in `state`.`keywordsMap` or that value plus 1, continue.
+                </li>
+                <li>
+Otherwise, if `key` is a string, set `plural` to false and `term` to `key`.
+                </li>
+                <li>
+Otherwise:
+                  <ol>
+                    <li>
+If `key` is odd, set `plural` to true. Otherwise, set `plural` to false.
+                    </li>
+                    <li>
+If `plural` is `true`, set `term` to the value of `id` minus 1 in `state`.`idToTerm`.
+If that value does not have an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                    <li>
+Otherwise, set `term` to the value of `id` in `state`.`idToTerm`. If that value does not have
+an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
+                    </li>
+                  </ol>
+                </li>
+                <li>
+Set `definition` to the value of `term` in `activeContext`.`termMap`.          
+                </li>
+                <li>
+Set `entryTerm` to be a new map.
+                </li>
+                <li>
+Set the value of "termId" in `entryTerm` to be the value of `key`. Add `term`, `plural`, and `definition`
+to `entryTerm`.
+                </li>
+                <li>
+Create an array `entry` with two elements, `entryTerm` and `value`.
+                </li>
+                <li>
+Add `entry` to `entries`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Sort `entries` by the value of `term` in each element of `entries`.
+            </li>
+            <li>
+Return a map `result` containing `entries` and `state`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Get Object Types for Decompression Algorithm</h4>
