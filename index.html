@@ -1098,16 +1098,64 @@ to be used with the "conversion" algorithms defined previously to
 convert CBOR-LD to JSON-LD.
         </p>
         <section>
-          <h4>Initialize Decompression Algorithm</h4>
-          <p>
-This algorithm takes and returns a map `state`.
-          </p>
-        </section>
-        <section>
           <h4>Convert Contexts for Decompression Algorithm</h4>
           <p>
-This algorithm takes and returns a map `state`.
+This algorithm takes maps `state`, `activeContext`, `input`, and `output` and returns a map 
+`result` containing maps `output`, `state`, and `activeContext`.
           </p>
+          <ol>
+            <li>
+Set `decoderData` to the result of <a href="#create-context-decoder"></a>, passing `state`.`reverseTypeTable`.
+            </li>
+            <li>
+Set `contextTermId` to the value of "@context" in `state`.`keywordsMap`.
+            </li>
+            <li>
+If `contextTermId` has an entry in `input`, set the value of 
+"@context" in `output` to the result of <a href="#decode-context"></a>, passing `decoderData` and
+the value of `contextTermId` in `input` as `value`.
+            </li>
+            <li>
+Set `contextTermIdPlural` to the value of `contextTermId` plus 1.
+            </li>
+            <li>
+If `contextTermIdPlural` has an entry in `input`:
+              <ol>
+                <li>
+If `contextTermId` also had an entry in `input` during the previous check, throw an error
+ERR_INVALID_ENCODED_CONTEXT.
+                </li>
+                <li>
+Set `encodedContexts` to be the value of `contextTermIdPlural` in `input`. If `encodedContexts` is
+not an array, throw an error ERR_INVALID_ENCODED_CONTEXT.
+                </li>
+                <li>
+Set `contexts` to be an empty array.
+                </li>
+                <li>
+For each `valueToDecode` in `encodedContexts`, add the result of passing `decoderData` and `valueToDecode`
+as `value` to <a href="#decode-context"></a> to `contexts`.
+                </li>
+                <li>
+Set the value of "@context" in `output` to `contexts`.
+                </li>
+              </ol>
+            </li>
+            <li>
+Set `embeddedContextResult` to the result of <a href="#apply-embedded-contexts-algorithm"></a>, passing
+`activeContext`, `output` as `input`, and `state`.
+            </li>
+            <li>
+Set `result` to an empty map.
+            </li>
+            <li>
+Set `result`.`state` to `embeddedContextResult`.`state` and `result.activeContext` to
+`embeddedContextResult`.`activeContext`.
+            </li>
+            <li>
+Return `result`.
+            </li>
+          </ol>
         </section>
         <section>
           <h4>Convert Value for Decompression Algorithm</h4>
