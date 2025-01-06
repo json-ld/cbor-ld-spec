@@ -673,16 +673,16 @@ The following is the current CBOR-LD registry:
   </section>
   <section class="normative">
     <h1>Algorithms</h1>
-In this section we specify the algorithms required to convert JSON-LD to CBOR-LD
-and vice versa. We first provide the context processing algorithms, which are required
-for both decompression and compression, then provide the mode-specific algorithms.
+In this section, we specify the algorithms required to convert JSON-LD to CBOR-LD
+and vice versa. We provide first the context processing algorithms, which are required
+for both decompression and compression; we then provide the mode-specific algorithms.
     <section>
       <h2>Encoding and Decoding</h2>
       <section>
         <h3>JSON-LD to CBOR-LD Compression Algorithm</h3>
         <p>
 This algorithm takes a map `typeTable`, an integer `registryEntryId`, and a JSON-LD
-document `jsonldDocument` as input and returns a hexadecimal string `cborldBytes`.
+document `jsonldDocument` as inputs, and returns a hexadecimal string `cborldBytes`.
         </p>
         <ol>
           <li>
@@ -842,7 +842,7 @@ first element of `outputMaps`.
         <h3>General Conversion Algorithm</h3>
         <p>
 This algorithm takes maps `input`, `output`, `state`, and `activeContext`
-as input and returns a map containing maps `state` and `output`.
+as inputs, and returns a map containing maps `state` and `output`.
         </p>
         <ol>
           <li>
@@ -1223,12 +1223,12 @@ Set `contextTermIdPlural` to the value of `contextTermId` plus 1.
 If `contextTermIdPlural` has an entry in `input`:
               <ol>
                 <li>
-If `contextTermId` also had an entry in `input` during the previous check, throw an error
-ERR_INVALID_ENCODED_CONTEXT.
+If `contextTermId` also had an entry in `input` during the previous check, throw an
+`ERR_INVALID_ENCODED_CONTEXT` error.
                 </li>
                 <li>
 Set `encodedContexts` to be the value of `contextTermIdPlural` in `input`. If `encodedContexts` is
-not an array, throw an error ERR_INVALID_ENCODED_CONTEXT.
+not an array, throw an `ERR_INVALID_ENCODED_CONTEXT` error.
                 </li>
                 <li>
 Set `contexts` to be an empty array.
@@ -1344,7 +1344,7 @@ Return a map `result` containing `entries` and `state`.
         <section>
           <h4>Get Object Types for Decompression Algorithm</h4>
           <p>
-This algorithm takes maps `state`, `activeContext`, `input` as inputs and
+This algorithm takes maps `state`, `activeContext`, `input` as inputs, and
 returns a map `state` and a set `objectTypes`.
           </p>
           <ol>
@@ -1476,7 +1476,7 @@ Return `activeContext`.
         <section>
           <h3>Apply Embedded Contexts Algorithm</h3>
             <p>
-This algorithm takes maps `state`, `activeContext` and `input` as input and
+This algorithm takes maps `state`, `activeContext`, and `input` as inputs, and
 returns a map `result` containing maps `state` and `activeContext`.
             </p>
             <ol>
@@ -1507,7 +1507,7 @@ Return `result`.
         <section>
           <h3>Apply Property Scoped Contexts Algorithm</h3>
           <p>
-This algorithm takes maps `state`, `activeContext` and a string `term` as input and
+This algorithm takes maps `state`, `activeContext`, and a string `term` as inputs and
 returns a map `result` containing maps `state` and `activeContext`.
           </p>
           <ol>
@@ -1546,7 +1546,7 @@ Return `result`.
         <section>
           <h3>Apply Type Scoped Contexts Algorithm</h3>
           <p>
-This algorithm takes maps `state`, `activeContext` and a set `objectTypes` as input and
+This algorithm takes maps `state`, `activeContext` ,and a set `objectTypes` as inputs, and
 returns a map `result` containing maps `state` and `activeContext`.
           </p>
           <ol>
@@ -2328,7 +2328,7 @@ Return `prefix`.
       <section>
         <h2>Get Registry Entry ID Algorithm</h2>
         <p>
-This algorithm takes an encoded CBOR-LD payload `cborldBytes` as input and returns
+This algorithm takes an encoded CBOR-LD payload `cborldBytes` as input, and returns
 the main data to be decoded, `suffix`, as well as the `registryEntryId` value that
 should be used to decompress `suffix`.
         </p>
@@ -2338,7 +2338,7 @@ If the CBOR tag on `cborldBytes` is not in the range `0x0600-0x06FF`, throw an
 ERR_NON_CBOR_LD_TAG error.
           </li>
           <li>
-Otherwise if the CBOR tag on `cborldBytes` is in the range `0x0600-0x067F`, set `registryEntryId` to
+Otherwise if the CBOR tag on `cborldBytes` is in the range `0x0600`-`0x067F`, set `registryEntryId` to
 the value of the last byte of the CBOR tag and set `suffix` to the portion of `cborldBytes` after the tag.          
           </li>
           <li>
@@ -2346,10 +2346,10 @@ Otherwise:
             <ol>
               <li>
 If the last byte of the CBOR tag does not form the first byte of a valid varint, throw an
-ERR_INVALID_VARINT_VALUE error.
+`ERR_INVALID_VARINT_VALUE` error.
               </li>
               <li>
-If the CBOR tagged item is not an array containing exactly two elements, throw an ERR_INVALID_VARINT_STRUCTURE
+If the CBOR tagged item is not an array containing exactly two elements, throw an `ERR_INVALID_VARINT_STRUCTURE`
 error.
               </li>
               <li>
