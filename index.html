@@ -906,6 +906,60 @@ Return `result`.
       </section>
       <section>
         <h3>Convert Value Algorithm</h3>
+        <p>
+This algorithm takes maps `state`, `activeContext`, `termInfo`, and values `value` and `termType`.
+It returns a `result` object containing maps `state` and `output`.
+        </p>
+        <ol>
+          <li>
+If `value` is `null`, return `null`.
+          </li>
+          <li>
+If `state`.`strategy` is set to "compression", set `output` to the result of passing `state`, `termType`,
+`termInfo`, and `value` to <a href="#convert-value-for-compression-algorithm"></a>.
+          </li>
+          <li>
+Otherwise, set `output` to the result of passing `state`, `termType`,
+`termInfo`, and `value` to <a href="#convert-value-for-decompression-algorithm"></a>.
+          </li>
+          <li>
+If `output` is defined, return `result`, a map contatining `state` and `output`.
+          </li>
+          <li>
+If `value` is an array:
+            <ol>
+              <li>
+Set `outputs` to be an empty array.
+              </li>
+              <li>
+For `element` of `value`:
+                <ol>
+                  <li>
+Let `result` be the result of <a href="#convert-value-algorithm"></a>, passing `activeContext`, `state`,
+`termInfo`, `termType`, and `element` as `value`. Set `state` to `result`.`state` and add `result`.`output`
+to `outputs`.
+                  </li>
+                </ol>
+              </li>
+              <li>
+Set `result` to be an empty map. Set `result`.`state` to `state` and `result`.`output` to `outputs`.
+              </li>
+              <li>
+                Return `result`.
+              </li>
+            </ol>
+          </li>
+          <li>
+Set `output` to an empty map.
+          </li>
+          <li>
+Set `result` to the result of <a href="#general-conversion-algorithm"></a>, passing `state`, 
+`activeContext`, `value` as `input`, and `output`.
+          </li>
+          <li>
+Return `result`.
+          </li>
+        </ol>
       </section>
       <section>
         <h3>Compression Strategy Algorithms</h3>
@@ -998,6 +1052,9 @@ If `valueToEncode` is an object, return.
             <li>
 Otherwise, set `result` to the result of <a href="#create-value-encoder"></a>, passing
 `state`, `termInfo`, `valueToToEncode`, and `termType`.
+            </li>
+            <li>
+Return `result`.
             </li>
           </ol>
         </section>
