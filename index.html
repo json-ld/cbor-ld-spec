@@ -723,7 +723,7 @@ Return `cborldBytes`.
       <section>
         <h3>CBOR-LD to JSON-LD Decompression Algorithm</h3>
         <p>
-This algorithm takes a CBOR-LD payload `cborldBytes` and returns a JSON-LD document `jsonldDocument`.
+This algorithm takes a CBOR-LD payload `cborldBytes`, and returns a JSON-LD document `jsonldDocument`.
         </p>
         <ol>
           <li>
@@ -740,7 +740,7 @@ Set `state` to an empty map.
 Set `state.strategy` to "decompression".
           </li>
           <li>
-For each entry `type`: `map` in the `typeTables` array in the CBOR-LD Varint Registry Entry
+For each entry <em>`type`: `map`</em> in the `typeTables` array in the CBOR-LD Varint Registry Entry
 associated with `registryEntryId`, add that entry to `state`.`typeTable`, and set the value of `type`
 in `state`.`reverseTypeTable` to `inverseMap`, where `inverseMap` is `map` with the mapping inverted.
           </li>
@@ -802,7 +802,7 @@ Return `state`.
         <h3>Convert Document Algorithm</h3>
         <p>
 This algorithm takes a map `state` and a map or array of
-maps `inputDocuments` and returns a map containing a map `state` and a map or
+maps `inputDocuments`, and returns a map containing a map `state` and a map or
 array of maps `outputMaps`.
         </p>
         <ol>
@@ -1086,7 +1086,7 @@ Return `result`.
         <section>
           <h4>Convert Value for Compression Algorithm</h4>
           <p>
-This algorithm takes maps `state` and `termInfo` and values `valueToEncode` and `termType`
+This algorithm takes maps `state` and `termInfo`, and values `valueToEncode` and `termType`,
 and returns a map `encoderData`.
           </p>
           <ol>
@@ -1105,7 +1105,7 @@ Return `result`.
         <section>
           <h4>Get Input Entries for Compression Algorithm</h4>
           <p>
-This algorithm takes maps `state`, `activeContext`, and `input` and returns a map `state` and an array `entries`.
+This algorithm takes maps `state`, `activeContext`, and `input`, and returns a map `state` and an array `entries`.
           </p>
           <ol>
             <li>
@@ -1162,7 +1162,7 @@ Return a map `result` containing `entries` and `state`.
         <section>
           <h4>Get Object Types for Compression Algorithm</h4>
           <p>
-This algorithm takes maps `activeContext` and `input` and returns a set
+This algorithm takes maps `activeContext` and `input`, and returns a set
 `objectTypes`.
           </p>
           <ol>
@@ -1201,7 +1201,7 @@ convert CBOR-LD to JSON-LD.
         <section>
           <h4>Convert Contexts for Decompression Algorithm</h4>
           <p>
-This algorithm takes maps `state`, `activeContext`, `input`, and `output` and returns a map 
+This algorithm takes maps `state`, `activeContext`, `input`, and `output`, and returns a map 
 `result` containing maps `output`, `state`, and `activeContext`.
           </p>
           <ol>
@@ -1261,7 +1261,7 @@ Return `result`.
         <section>
           <h4>Convert Value for Decompression Algorithm</h4>
           <p>
-This algorithm takes maps `state` and `termInfo` and values `termType` and `valueToDecode` and returns a value
+This algorithm takes maps `state` and `termInfo`, and values `termType` and `valueToDecode`, and returns a value
 `decodedValue`.
           </p>
           <ol>
@@ -1283,7 +1283,7 @@ Return `decodedValue`.
         <section>
           <h4>Get Input Entries for Decompression Algorithm</h4>
           <p>
-This algorithm takes maps `state`, `activeContext`, and `input` and returns a map `state` and an array
+This algorithm takes maps `state`, `activeContext`, and `input`, and returns a map `state` and an array
 `entries`.
           </p>
           <ol>
@@ -1443,7 +1443,7 @@ when converting to and from CBOR-LD.
         <section>
           <h3>Initialize Active Context Algorithm</h3>
           <p>
-This algorithm takes maps `previousActiveContext` and `termMap`
+This algorithm takes maps `previousActiveContext` and `termMap`,
 and returns a map `activeContext`. It updates the active context
 in use and finds all aliases for `'@type'`.
           </p>
@@ -1684,7 +1684,7 @@ Return `result`.
         <section>
           <h3>Revert Term Map Algorithm</h3>
           <p>
-This algorithm takes as input a map `activeContext` and returns a map
+This algorithm takes as input a map `activeContext`, and returns a map
 `newTermMap`.
           </p>
           <ol>
@@ -1807,7 +1807,7 @@ Return `state`.
       <section>
         <h3>Load Context Algorithm</h3>
         <p>
-This algorithm takes a map `state` and a context map or URL `contextIdentifier` and returns
+This algorithm takes a map `state` and a context map or URL `contextIdentifier`, and returns
 `result`, a map containing maps `state` and `entry`.
         </p>
         <ol>
@@ -1855,7 +1855,7 @@ Return `result`.
       <section>
         <h3>Add Context Algorithm</h3>
         <p>
-This algorithm takes a map `state`, a context object `context`, and a context URL `contextUrl`
+This algorithm takes a map `state`, a context object `context`, and a context URL `contextUrl`,
 and returns `result`, a map containing maps `state` and `entry`.
         </p>
         <ol>
@@ -2011,7 +2011,7 @@ Return `encoderData`.
         <section>
           <h4>Encode Context</h4>
           <p>
-This algorithm takes a map `encoderData` and returns CBOR binary data.
+This algorithm takes a map `encoderData`, and returns CBOR binary data.
           </p>
           <ol>
             <li>
@@ -2027,7 +2027,7 @@ Otherwise, return a CBOR encoding of the value of `encoderData`.`context` as a M
         <section>
           <h4>Create Context Decoder</h4>
           <p>
-This algorithm takes a map `reverseTypeTable`and
+This algorithm takes a map `reverseTypeTable`, and
 returns a map `encoderData`.
           </p>
           <ol>
@@ -2046,7 +2046,7 @@ return `decoderData`.
         <section>
           <h4>Decode Context</h4>
           <p>
-This algorithm takes a map `decoderData` and a value `value` and returns a value.
+This algorithm takes a map `decoderData` and a value `value`, and returns a value.
           </p>
           <ol>
             <li>
@@ -2067,8 +2067,8 @@ Otherwise, throw an error ERR_UNDEFINED_COMPRESSED_CONTEXT.
         <section>
           <h4>Create Value Encoder</h4>
           <p>
-This algorithm takes maps `state` and `termInfo` and values
-`termType` and `valueToEncode` and returns a map `encoderData` or `valueToEncode`.
+This algorithm takes maps `state` and `termInfo`, and values
+`termType` and `valueToEncode`, and returns a map `encoderData` or `valueToEncode`.
           </p>
           <ol>
             <li>
@@ -2154,7 +2154,7 @@ Return `valueToEncode`.
         <section>
           <h4>Encode Value</h4>
           <p>
-This algorithm takes a map `encoderData` and returns CBOR binary data.
+This algorithm takes a map `encoderData`, and returns CBOR binary data.
           </p>
           <ol>
             <li>
@@ -2177,8 +2177,8 @@ Otherwise, return a CBOR encoding of `intValue` as a Major Type 0 (unsigned inte
         <section>
           <h4>Create Value Decoder</h4>
           <p>
-This algorithm takes maps `state` and `termInfo` and values
-`termType` and `valueToDecode` and returns a map `decoderData`.
+This algorithm takes maps `state` and `termInfo`, and values
+`termType` and `valueToDecode`, and returns a map `decoderData`.
           </p>
           <ol>
             <li>
@@ -2189,7 +2189,7 @@ If `termInfo.term` is "@id" or "@type", set `isUrl` to `true`.
             </li>
             <li>
 If the value of "@id" in `termInfo.def` is "@id" or "@type", set
-`isUrl` to true.
+`isUrl` to `true`.
             </li>
             <li>
 If `termType` is "@id" or "@vocab", set `isUrl` to `true`.
@@ -2225,7 +2225,7 @@ Set `intValue` to the unsigned integer conversion of the `valueToDecode` bytes.
                   </ol>
                 </li>
                 <li>
-Otherwise if `valueToDecode` is an integer and `state`.`typesEncodedAsBytes` does not
+Otherwise, if `valueToDecode` is an integer and `state`.`typesEncodedAsBytes` does not
 have an entry for `tableType`:
                   <ol>
                     <li>
@@ -2240,7 +2240,7 @@ Set `intValue` to `valueToDecode`.
 If `useTable` is `true`:
                   <ol>
                     <li>
-If `intValue` is not in `subTable`. throw an error ERR_UNKNOWN_COMPRESSED_VALUE.
+If `intValue` is not in `subTable`, throw an error ERR_UNKNOWN_COMPRESSED_VALUE.
                     </li>
                     <li>
 Otherwise, set `decoded` to the value of `intValue` in `subTable`.
@@ -2248,7 +2248,7 @@ Otherwise, set `decoded` to the value of `intValue` in `subTable`.
                   </ol>
                 </li>
                 <li>
-Otherwise if `valueToDecode` is a byte array and `tableType` is not "none", set
+Otherwise, if `valueToDecode` is a byte array and `tableType` is not "none", set
 `decoded` to the integer conversion of `valueToDecode`.
                 </li>
                 <li>
@@ -2273,7 +2273,7 @@ Otherwise, if `valueToDecode` is not an array, initialize `decoderData` to an em
         <section>
           <h4>Decode Value</h4>
           <p>
-This algorithm takes a map `decoderData` and returns a value.
+This algorithm takes a map `decoderData`, and returns a value.
           </p>
           <ol>
             <li>
@@ -2298,7 +2298,7 @@ Set `varintEncoded` to the byte encoding of `registryEntryId`.
               </li>
               <li>
 Set `prefix` to the result of appending `varintEncoded` to the end of the bytes
-0xD906.
+`0xD906`.
               </li>
             </ol>
           </li>
@@ -2309,11 +2309,11 @@ Otherwise:
 Set `varintArray` to an array containing the varint representation of `registryEntryId`.
               </li>
               <li>
-Set `varintTagValue` to `varintArray[0]` appended to the end of the bytes 0xD906.
+Set `varintTagValue` to `varintArray[0]` appended to the end of the bytes `0xD906`.
               </li>
               <li>
 Set `varintBytesValue` to a CBOR byte string containing the rest of `varintArray` appended
-to the end of the bytes 0x82.
+to the end of the bytes `0x82`.
               </li>
               <li>
 Set `prefix` to `varintBytesValue` appended to the end of `varintTagValue`.
@@ -2329,7 +2329,7 @@ Return `prefix`.
         <h2>Get Registry Entry ID Algorithm</h2>
         <p>
 This algorithm takes an encoded CBOR-LD payload `cborldBytes` as input, and returns
-the main data to be decoded, `suffix`, as well as the `registryEntryId` value that
+`suffix`, the main data to be decoded, as well as the `registryEntryId` value that
 should be used to decompress `suffix`.
         </p>
         <ol>
@@ -2338,7 +2338,7 @@ If the CBOR tag on `cborldBytes` is not in the range `0x0600`-`0x06FF`, throw an
 ERR_NON_CBOR_LD_TAG error.
           </li>
           <li>
-Otherwise if the CBOR tag on `cborldBytes` is in the range `0x0600`-`0x067F`, set `registryEntryId` to
+Otherwise, if the CBOR tag on `cborldBytes` is in the range `0x0600`-`0x067F`, set `registryEntryId` to
 the value of the last byte of the CBOR tag and set `suffix` to the portion of `cborldBytes` after the tag.          
           </li>
           <li>
