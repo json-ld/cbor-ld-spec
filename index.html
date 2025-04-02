@@ -506,6 +506,7 @@ The value of this varint is then used to lookup a <b>CBOR-LD Varint Registry Ent
 The <b>CBOR-LD Registry</b> is a global list that provides
 consumers of CBOR-LD payloads the information they need to reconstruct the term codec map
 required for decompression. A <b>CBOR-LD Varint Registry Entry</b> contains the following:
+      </p>
         <ol>
           <li>
 Registry Entry ID: a positive integer.
@@ -530,15 +531,15 @@ Provisional: a yes/no flag indicating whether the entry is provisional. Provisio
 may change or be removed.
           </li>
         </ol>
-      </p>
       <p>
 The `typeTables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
 or JSON objects. The only exception is the string "callerProvidedTable", which may appear in this array,
 denoting that for this use case, a `Type Table` is required which is not globally
 defined.
       </p>
-      <p></p>
+      <p>
 Dereferencing one of these URLs MUST result in a JSON object with the following properties:
+      </p>
       <ol>
         <li>
 `type`: a JSON-LD type.
@@ -2396,6 +2397,7 @@ Return `result`.
         </ol>
       </section>
     </section>
+  </section>
 
 </body>
 </html>
