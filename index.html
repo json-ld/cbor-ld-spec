@@ -464,7 +464,7 @@ the contexts needed to create the term codec map can have their URLs encoded as 
 by CBOR-LD. If a CBOR-LD payload contains context URLs compressed in such a way, the
 consumer of the CBOR-LD needs to know what compression tables (maps from JSON-LD terms to integers)
 were used to compress the context URLs during creation to be able to reconstruct the term codec
-map. The following sections define the exact mechanism by which this can be accomplished, allowing 
+map. The following sections define the exact mechanism by which this can be accomplished, allowing
 an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload that conforms to this specification.
     </p>
     <p>
@@ -520,7 +520,7 @@ type of payload.
           <li>
 `processingModel`: what processing model is used for this registry entry. A processing model
 specifies how auto-generated CBOR-LD values are created from JSON-LD contexts as well as what
-type encoders are used alongside the `Type Tables` (e.g. how to partially compress an 
+type encoders are used alongside the `Type Tables` (e.g. how to partially compress an
 `xsd:dateTime` value that does not appear in `Type Table`). The default processing model,
 which will be defined later in this specification, will be used unless otherwise specified
 in the Registry Entry.
@@ -601,7 +601,7 @@ The following is the current CBOR-LD registry:
   },
   {
     type: "https://w3id.org/security#cryptosuiteString",
-    table: 
+    table:
     {
       "ecdsa-rdfc-2019": 1,
       "ecdsa-sd-2023": 2,
@@ -633,14 +633,14 @@ The following is the current CBOR-LD registry:
   },
   {
     type: "https://w3id.org/security#cryptosuiteString",
-    table: 
+    table:
     {
       "ecdsa-rdfc-2019": 1
     }
   },
   {
     type: "url",
-    table: 
+    table:
     {
       "did:key:zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee": 1,
       "did:key:zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee#zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee": 2,
@@ -672,14 +672,14 @@ The following is the current CBOR-LD registry:
   },
   {
     type: "https://w3id.org/security#cryptosuiteString",
-    table: 
+    table:
     {
       "ecdsa-rdfc-2019": 1
     }
   },
   {
     type: "url",
-    table: 
+    table:
     {
       "did:key:zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee": 1,
       "did:key:zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee#zDnaeW9VZZs7NH1ykvS5EMFmdodu2wj4dPcrV3DzTAadrXJee": 2,
@@ -808,7 +808,7 @@ Set `state` to the result of passing `state` to
           </li>
           <li>
 Set `state.initialActiveContext` to the result of passing empty maps `termMap` and
-`previousActiveContext` to <a href="#initialize-active-context-algorithm"></a>.            
+`previousActiveContext` to <a href="#initialize-active-context-algorithm"></a>.
           </li>
           <li>
 Set `state.typesEncodedAsBytes` to an empty set.
@@ -875,7 +875,7 @@ If `state.strategy` is set to "compression":
               <li>
 Set `contextConversionResult` to the result of
 <a href="#convert-contexts-for-compression-algorithm"></a>, passing
-`state`, `activeContext`, `input`, and `output`.                 
+`state`, `activeContext`, `input`, and `output`.
               </li>
               <li>
 Set `activeContext` to `contextConversionResult.activeContext`, `output`
@@ -885,7 +885,7 @@ to `contextConversionResult.output`, and `state` to `contextConversionResult.sta
           </li>
           <li>
 Otherwise, set `activeContext` to
-`result.activeContext` and `state` to `result.state` of `result` resulting from 
+`result.activeContext` and `state` to `result.state` of `result` resulting from
 <a href="#convert-contexts-for-decompression-algorithm"></a>, passing `state`,
 `activeContext`, `input`, and `output`.
           </li>
@@ -912,7 +912,7 @@ If `state.strategy` is set to "compression", set `state` to `result.state` and
           </li>
           <li>
 Otherwise, set `state` to `result.state`, `output` to `result.output`,
-and `termEntries` to `result.termEntries` for `result` resulting from 
+and `termEntries` to `result.termEntries` for `result` resulting from
 <a href="#get-input-entries-for-decompression-algorithm"></a>,
 passing `state`, `input`, output, and `activeContext`.
           </li>
@@ -1021,7 +1021,7 @@ Set `result` to be an empty map. Set `result`.`state` to `state` and `result`.`o
 Set `output` to an empty map.
           </li>
           <li>
-Set `result` to the result of <a href="#general-conversion-algorithm"></a>, passing `state`, 
+Set `result` to the result of <a href="#general-conversion-algorithm"></a>, passing `state`,
 `activeContext`, `value` as `input`, and `output`.
           </li>
           <li>
@@ -1225,7 +1225,7 @@ convert CBOR-LD to JSON-LD.
         <section>
           <h4>Convert Contexts for Decompression Algorithm</h4>
           <p>
-This algorithm takes maps `state`, `activeContext`, `input`, and `output`, and returns a map 
+This algorithm takes maps `state`, `activeContext`, `input`, and `output`, and returns a map
 `result` containing maps `output`, `state`, and `activeContext`.
           </p>
           <ol>
@@ -1236,7 +1236,7 @@ Set `decoderData` to the result of <a href="#create-context-decoder"></a>, passi
 Set `contextTermId` to the value of "@context" in `state`.`keywordsMap`.
             </li>
             <li>
-If `contextTermId` has an entry in `input`, set the value of 
+If `contextTermId` has an entry in `input`, set the value of
 "@context" in `output` to the result of <a href="#decode-context"></a>, passing `decoderData` and
 the value of `contextTermId` in `input` as `value`.
             </li>
@@ -1340,7 +1340,7 @@ an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
                   </ol>
                 </li>
                 <li>
-Set `definition` to the value of `term` in `activeContext`.`termMap`.          
+Set `definition` to the value of `term` in `activeContext`.`termMap`.
                 </li>
                 <li>
 Set `entryTerm` to be a new map.
@@ -1413,7 +1413,7 @@ an entry, throw an error ERR_UNKNOWN_CBORLD_TERM_ID.
                   </ol>
                 </li>
                 <li>
-Set `definition` to the value of `term` in `activeContext`.`termMap`.          
+Set `definition` to the value of `term` in `activeContext`.`termMap`.
                 </li>
                 <li>
 Set `termInfo` to be a new map.
@@ -1506,7 +1506,7 @@ returns a map `result` containing maps `state` and `activeContext`.
             <ol>
               <li>
 Set `termMapUpdateResult` to the result of passing `state`, `activeContext.termMap` as
-`activeTermMap`, and the value of '@context' in `input` as `contexts` to 
+`activeTermMap`, and the value of '@context' in `input` as `contexts` to
 <a href="#update-term-map-algorithm"></a>.
               </li>
               <li>
@@ -1524,7 +1524,7 @@ Set `result` to be a new map, and set `result.activeContext` to `newActiveContex
 `result.state` to `state`.
               </li>
               <li>
-Return `result`. 
+Return `result`.
               </li>
             </ol>
         </section>
@@ -1545,7 +1545,7 @@ Set `termDef` to the value of `term` in `activeContext.termMap`. Set `contexts` 
             </li>
             <li>
 Set `termMapUpdateResult` to the result of passing `state`, `revertedTermMap` as
-`activeTermMap`, `true` as `propertyScope`, and `contexts` to 
+`activeTermMap`, `true` as `propertyScope`, and `contexts` to
 <a href="#update-term-map-algorithm"></a>.
             </li>
             <li>
@@ -1563,7 +1563,7 @@ Set `result` to be a new map, and set `result.activeContext` to `newActiveContex
 `result.state` to `state`.
             </li>
             <li>
-Return `result`. 
+Return `result`.
             </li>
           </ol>
         </section>
@@ -1611,7 +1611,7 @@ Set `result` to be a new map, and set `result.activeContext` to `newActiveContex
 `result.state` to `state`.
               </li>
               <li>
-Return `result`. 
+Return `result`.
               </li>
           </ol>
         </section>
@@ -1652,13 +1652,13 @@ Set `newTermMap` to be an empty map. For [`key`, `value`] in `entry`.`termMap`:
                   <ol>
                     <li>
 Shallow copy the contents of `value` into a new map `newValue` and add `propagate`
-to `newValue`. 
+to `newValue`.
                     </li>
                     <li>
 Set the value of `key` in `newTermMap` to `newValue`.
                     </li>
                   </ol>
-                </li> 
+                </li>
                 <li>
 For [`term`, `activeDef`] in `activeTermMap`:
                   <ol>
@@ -1691,7 +1691,7 @@ a map containing all values from `activeDef`.
                 </li>
                 <li>
 Set the value of `activeTermMap` to the value of `newTermMap`.
-                </li>   
+                </li>
               </ol>
             </li>
             <li>
@@ -1760,7 +1760,7 @@ Return `newTermMap`.
             </li>
           </ol>
         </section>
-    </section>    
+    </section>
 
     <section>
       <h2>Context Loading</h2>
@@ -2301,8 +2301,8 @@ This algorithm takes a map `decoderData`, and returns a value.
           </p>
           <ol>
             <li>
-Return `decoderData`.`decoded`.  
-            </li>          
+Return `decoderData`.`decoded`.
+            </li>
           </ol>
         </section>
       </section>
@@ -2363,7 +2363,7 @@ ERR_NON_CBOR_LD_TAG error.
           </li>
           <li>
 Otherwise, if the CBOR tag on `cborldBytes` is in the range `0x0600`-`0x067F`, set `registryEntryId` to
-the value of the last byte of the CBOR tag and set `suffix` to the portion of `cborldBytes` after the tag.          
+the value of the last byte of the CBOR tag and set `suffix` to the portion of `cborldBytes` after the tag.
           </li>
           <li>
 Otherwise:
@@ -2382,7 +2382,7 @@ byte of the CBOR tag and the rest of the varint is the first element in the two 
 value of the second element in the array.
               </li>
             </ol>
-            
+
           </li>
           <li>
 Set `result` to be an empty map.
