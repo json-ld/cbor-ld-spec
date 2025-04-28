@@ -691,6 +691,63 @@ The following is the current CBOR-LD registry:
               </pre>
             </td>
           </tr>
+          <tr>
+            <td>10500</td>
+            <td>California DL/ID Barcodes</td>
+            <td>DEFAULT</td>
+            <td>Yes</td>
+            <td>
+              <pre>
+[
+  {
+    type: "context",
+    table:
+    {
+      "https://www.w3.org/ns/credentials/v2": 1,
+      "https://w3id.org/vc-barcodes/v1": 2
+    }
+  },
+  {
+    type: "https://w3id.org/security#cryptosuiteString",
+    table:
+    {
+      "ecdsa-xi-2023": 1
+    }
+  },
+  {
+    type: "url",
+    table:
+    {
+      "did:web:credentials.dmv.ca.gov": 1,
+      "https://api.credentials.dmv.ca.gov/status/dlid/1/status-lists": 2,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-1": 3,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-2": 4,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-3": 5,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-4": 6,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-5": 7,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-6": 8,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-7": 9,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-8": 10,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-9": 11,
+      "did:web:credentials.dmv.ca.gov#vm-vcb-10": 12,
+      "did:web:uat-credentials.dmv.ca.gov": 13,
+      "https://api.uat-credentials.dmv.ca.gov/status/dlid/1/status-lists": 14,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-1": 15,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-2": 16,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-3": 17,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-4": 18,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-5": 19,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-6": 20,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-7": 21,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-8": 22,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-9": 23,
+      "did:web:uat-credentials.dmv.ca.gov#vm-vcb-10": 24
+    }
+  }
+]
+              </pre>
+            </td>
+          </tr>
         </tbody>
       </table>
 
