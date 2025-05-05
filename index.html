@@ -468,8 +468,8 @@ map. The following sections define the exact mechanism by which this can be acco
 an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload that conforms to this specification.
     </p>
     <p>
-To this end, we have registered the CBOR tag `0xCB1D` (tag value 51997) to be used for CBOR-LD,
-where data that includes tag value is used to lookup what compression table(s) are needed
+To this end, we have registered the CBOR tag `0xCB1D` (tag value 51997) to be used for CBOR-LD.
+The data that follows this tag value is used to lookup what compression table(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
     <p class="issue">
@@ -481,7 +481,7 @@ Tag Registry</a>. The exact value is subject to change.
       <h2>CBOR-LD Registry Entry Id</h2>
       <p>
 To enable unbounded extension on possible use cases for CBOR-LD that require different
-compression table material for consumption while working within a single
+compression table material for consumption while working with a single
 CBOR tag value, we define the following.
       </p>
       <p>
