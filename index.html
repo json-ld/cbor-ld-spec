@@ -468,44 +468,38 @@ map. The following sections define the exact mechanism by which this can be acco
 an arbitrary CBOR-LD consumer to decompress any CBOR-LD payload that conforms to this specification.
     </p>
     <p>
-To this end, we have registered the range of CBOR tags 1536-1791** (0x0600-0x06FF) to be used for CBOR-LD,
+To this end, we have registered the CBOR tag `0xCB1D` (tag value 51997) to be used for CBOR-LD,
 where data that includes tag value is used to lookup what compression table(s) are needed
 to decompress the CBOR-LD context URLs.
     </p>
     <p class="issue">
-This exact range of tag values has not yet been officially registered with
+This exact tag value has not yet been officially registered with
 <a href="https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml">the IANA CBOR
-Tag Registry</a>. The exact range is subject to change.
+Tag Registry</a>. The exact value is subject to change.
     </p>
     <section>
-      <h2>CBOR-LD Varint</h2>
+      <h2>CBOR-LD Registry Entry Id</h2>
       <p>
 To enable unbounded extension on possible use cases for CBOR-LD that require different
-compression table material for consumption while working within a fixed number of
-CBOR tag values, we define the following.
+compression table material for consumption while working within a single
+CBOR tag value, we define the following.
       </p>
       <p>
-Implementers MUST interpret the last byte of the two-byte CBOR tag value on a CBOR-LD payload
-as the beginning of a varint. If the CBOR tag is in the range `0x0600`–`0x067F`, the last byte of
-the CBOR tag is a one-byte varint, and the tagged item MUST be a map containing the encoded
-JSON-LD. If the CBOR tag is `0x0680` or greater, the tagged item MUST be an array containing
-two elements. The first item in the array MUST be a major type 2 byte string containing the
-rest of the varint, and the second item in the array MUST be a map containing the
-encoded JSON-LD. See Algorithm <a
-href="#get-varint-structure-algorithm"></a> for
-more information.
+CBOR-LD payloads MUST be structured such that the item tagged with tag `0xCB1D` is
+a two-element array, and the first element MUST be a major type 0 integer. This
+integer is a CBOR-LD Registry Entry ID.
       </p>
       <p>
-The value of this varint is then used to lookup a <b>CBOR-LD Varint Registry Entry</b> in the
-<b>CBOR-LD Varint Registry</b>.
+The value of the CBOR-LD Registry Entry ID is then used to lookup a <b>CBOR-LD Registry Entry</b>
+in the <b>CBOR-LD Registry</b>.
       </p>
     </section>
     <section>
-      <h2>CBOR-LD Varint Registry</h2>
+      <h2>CBOR-LD Registry</h2>
       <p>
 The <b>CBOR-LD Registry</b> is a global list that provides
 consumers of CBOR-LD payloads the information they need to reconstruct the term codec map
-required for decompression. A <b>CBOR-LD Varint Registry Entry</b> contains the following:
+required for decompression. A <b>CBOR-LD Registry Entry</b> contains the following:
       </p>
         <ol>
           <li>
@@ -532,7 +526,7 @@ may change or be removed.
           </li>
         </ol>
       <p>
-The `typeTables` associated with a <b>CBOR-LD Varint Registry Entry</b> MUST be an array of
+The `typeTables` associated with a <b>CBOR-LD Registry Entry</b> MUST be an array of
 or JSON objects. The only exception is the string "callerProvidedTable", which may appear in this array,
 denoting that for this use case, a `Type Table` is required which is not globally
 defined.
@@ -2457,6 +2451,16 @@ Return `result`.
           </li>
         </ol>
       </section>
+    </section>
+  </section>
+  <section class="informative">
+    <h1>IANA Considerations</h1>
+    <section>
+      <h2>CBOR Tag</h2>
+      <p>
+This specification registers a CBOR tag to allow consumers to identify CBOR-LD payloads.
+      </p>
+      
     </section>
   </section>
 
