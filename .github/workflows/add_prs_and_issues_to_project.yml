@@ -17,3 +17,11 @@ jobs:
         with:
           project-url: https://github.com/orgs/w3c/projects/84
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+        id: add-to-project
+      - uses: titoportas/update-project-fields@v0.1.0
+        with:
+          project-url: https://github.com/users/titoportas/projects/2
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          item-id: ${{ steps.add-to-project.outputs.itemId }} # Use the item-id output of the previous step
+          field-keys: Status
+          field-values: CBOR-LD
